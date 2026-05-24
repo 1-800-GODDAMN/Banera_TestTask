@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriFlow — Brand Stylescape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* =========================================
+     TOKENS — copied verbatim from design-system.html
+     Single source of truth. Do not redefine values here.
+  ========================================= */
+  :root {
+    /* Color */
+    --primary: #7BAE7F;
+    --accent: #FF6B6B;
+    --carbs: #F0B86E;
+    --warm: #D9886B;
+    --background: #FAFAF5;
+    --text-primary: #2D2D2D;
+    --ink: #1A2E1F;
+    --text-secondary: #8B8B8B;
+
+    --primary-soft: #E8F1E9;
+    --accent-soft: #FFE5E5;
+    --carbs-soft: #FBEACA;
+    --warm-soft: #F5DCD0;
+    --surface: #FFFFFF;
+    --border: rgba(45, 45, 45, 0.08);
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --space-7: 64px;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-pill: 100px;
+
+    /* Elevation */
+    --shadow-xs: 0 1px 2px rgba(45, 45, 45, 0.04);
+    --shadow-sm: 0 2px 8px rgba(45, 45, 45, 0.05);
+    --shadow-md: 0 8px 24px rgba(45, 45, 45, 0.06);
+    --shadow-lg: 0 20px 48px rgba(45, 45, 45, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: auto; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* =========================================
+     LAYOUT
+  ========================================= */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+  }
+
+  .section {
+    padding: var(--space-7) 0;
+  }
+
+  /* Editorial section header — branding stylescape style.
+     Differs intentionally from design-system.html (which uses Nunito).
+     Mono num + Fraunces 32px title gives the stylescape its magazine feel. */
+  .section-header { margin-bottom: var(--space-6); }
+  .section-num {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+
+  /* =========================================
+     SECTION 01 — COVER / HERO
+  ========================================= */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: var(--space-7) var(--space-5);
+    background:
+      radial-gradient(circle at 18% 18%, var(--primary-soft) 0%, rgba(232, 241, 233, 0) 55%),
+      var(--background);
+  }
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-stack {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-leaf { margin-bottom: var(--space-5); }
+  .hero-wordmark {
+    font-family: 'Fraunces', serif;
+    font-size: 96px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -2px;
+    line-height: 1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .hero-tagline {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--primary);
+    margin-top: var(--space-3);
+  }
+  .hero-footer {
+    position: absolute;
+    bottom: var(--space-5);
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    z-index: 1;
+  }
+
+  /* =========================================
+     SECTION 02 — LOGO SYSTEM
+  ========================================= */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+  .logo-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    min-height: 220px;
+  }
+  .logo-card.full { grid-column: 1 / -1; }
+  .logo-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-lockup .wordmark {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -1.5px;
+    line-height: 1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .logo-caption {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  /* =========================================
+     SECTION 03 — COLOR PALETTE
+  ========================================= */
+  .palette-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-3);
+  }
+  .swatch {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    height: 280px;
+  }
+  /* Color block is fixed at 200px regardless of info-bar content height —
+     prevents Coral / Amber compression when their taglines wrap to more lines. */
+  .swatch-color { height: 200px; flex-shrink: 0; }
+  .swatch-info {
+    flex: 1;
+    background: var(--surface);
+    padding: var(--space-3);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .swatch-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+  }
+  .swatch-hex {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .swatch-tag {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+
+  /* Horizontal scroll on narrow screens */
+  @media (max-width: 1000px) {
+    .palette-row {
+      grid-template-columns: repeat(7, 160px);
+      overflow-x: auto;
+      padding-bottom: var(--space-3);
+      scroll-snap-type: x mandatory;
+    }
+    .swatch { scroll-snap-align: start; }
+  }
+
+  /* =========================================
+     SECTION 04 — TYPOGRAPHY IN USE
+  ========================================= */
+  .typo-spread {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+  .typo-col {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-6);
+  }
+  .typo-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+  }
+  .typo-headline {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .typo-subhead {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-top: var(--space-3);
+  }
+  .typo-body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-top: var(--space-5);
+  }
+
+  /* In-app stack */
+  .app-stack { display: flex; flex-direction: column; }
+  .app-greet-l1 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .app-greet-l2 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--primary);
+    line-height: 1.1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    margin-bottom: var(--space-3);
+  }
+  .app-cal-num {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -2px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .app-cal-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    margin-bottom: var(--space-4);
+  }
+  .app-sec-head {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .app-meal-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: var(--space-2);
+  }
+  .app-meal-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .typo-caption {
+    margin-top: var(--space-5);
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  /* =========================================
+     SECTION 05 — BRAND IN USE
+  ========================================= */
+  .mockup-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+  .mockup-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-5);
+    /* Grid with a fixed-height stage row + auto caption row so all three
+       captions land on the same baseline regardless of mockup height. */
+    display: grid;
+    grid-template-rows: 320px auto;
+    align-items: center;
+    justify-items: center;
+    gap: var(--space-4);
+  }
+  .mockup-caption {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-align: center;
+    /* Pin to row top so first-line baselines align even when sibling
+       captions wrap to 2 lines (e.g. APPLE WATCH · COMPLICATION VIEW). */
+    align-self: start;
+  }
+
+  /* Mockup A — App icon */
+  .app-icon {
+    width: 200px;
+    height: 200px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    border-radius: 44px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-soft) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 36px rgba(123, 174, 127, 0.25);
+  }
+
+  /* Mockup B — Apple Watch */
+  .watch {
+    width: 240px;
+    height: 290px;
+    border-radius: 50px;
+    background: #1A1A1A;
+    padding: 32px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+  }
+  /* Digital Crown — the single most recognizable feature of Apple Watch.
+     Protrudes 4px past the right edge of the case, vertically centered. */
+  .watch-crown {
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 28px;
+    background: linear-gradient(to right, #2D2D2D, #555);
+    border-radius: 2px;
+  }
+  .watch-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 28px;
+    background: #050805;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Ring scales to fit the smaller (240×290) case while preserving its
+     visual ratio inside the screen — ~83% of the inner screen width. */
+  .watch-ring {
+    position: relative;
+    width: 150px;
+    height: 150px;
+  }
+  .watch-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .watch-ring .ring-bg { stroke: var(--primary-soft); }
+  .watch-ring .ring-fg { stroke: var(--primary); stroke-linecap: round; }
+  .watch-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .watch-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    color: #FFFFFF;
+    line-height: 1;
+    letter-spacing: -1px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .watch-of {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 6px;
+  }
+
+  /* Mockup C — Instagram post */
+  .ig-post {
+    width: 320px;
+    height: 320px;
+    border-radius: var(--radius-md);
+    background: var(--background);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ig-noise {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ig-leaf {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 1;
+  }
+  .ig-quote {
+    position: relative;
+    z-index: 1;
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.4;
+    max-width: 240px;
+    text-align: center;
+    padding: 0 var(--space-3);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .ig-attr {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 1;
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .ig-wordmark {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  /* =========================================
+     SECTION 06 — VOICE & QUOTE
+  ========================================= */
+  .voice-col {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .voice-pull {
+    border-left: 3px solid var(--primary);
+    padding-left: var(--space-4);
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .voice-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+  }
+  .voice-quote {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .voice-attr {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+  }
+
+  /* =========================================
+     FOOTER
+  ========================================= */
+  .stylescape-footer {
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: var(--space-7);
+    margin-bottom: var(--space-5);
+  }
+
+  /* =========================================
+     RESPONSIVE
+  ========================================= */
+  @media (max-width: 900px) {
+    .hero-wordmark { font-size: 64px; letter-spacing: -1.5px; }
+    .hero-tagline { font-size: 20px; }
+    .logo-grid { grid-template-columns: 1fr; }
+    .logo-card.full { grid-column: auto; }
+    .typo-spread { grid-template-columns: 1fr; gap: var(--space-4); }
+    .typo-headline { font-size: 44px; letter-spacing: -1px; }
+    .typo-col { padding: var(--space-5); }
+    .mockup-grid { grid-template-columns: 1fr; }
+    .voice-pull { font-size: 26px; line-height: 1.35; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- =========================================
+       SECTION 01 — COVER / HERO
+  ========================================= -->
+  <section class="hero">
+    <!-- Subtle paper-grain noise overlay -->
+    <svg class="hero-noise" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <filter id="hero-noise-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+        <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0.035 0"/>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#hero-noise-filter)"/>
+    </svg>
+
+    <div class="hero-stack">
+      <!-- Leaf logomark — verbatim ico-leaf SVG from design-system §06, scaled to 96x96 -->
+      <div class="hero-leaf">
+        <svg width="96" height="96" viewBox="0 0 32 32" fill="none">
+          <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+          <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="hero-wordmark">NutriFlow</div>
+      <div class="hero-tagline">Eat well, simply.</div>
+    </div>
+
+    <div class="hero-footer">Brand Stylescape · 2026</div>
+  </section>
+
+  <!-- =========================================
+       SECTION 02 — LOGO SYSTEM
+  ========================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-num">01</div>
+        <h2 class="section-title">Logo system</h2>
+      </div>
+
+      <div class="logo-grid">
+
+        <!-- Variation A — Primary lockup (full width) -->
+        <div class="logo-card full">
+          <div class="logo-lockup">
+            <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+              <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="wordmark">NutriFlow</span>
+          </div>
+          <div class="logo-caption">Primary lockup</div>
+        </div>
+
+        <!-- Variation B — Mark only -->
+        <div class="logo-card">
+          <svg width="80" height="80" viewBox="0 0 32 32" fill="none">
+            <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+            <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+          </svg>
+          <div class="logo-caption">Mark only · App icons, favicons</div>
+        </div>
+
+        <!-- Variation C — Monochrome -->
+        <div class="logo-card">
+          <div class="logo-lockup">
+            <!-- Leaf re-tinted: stroke + inner detail in --ink, fill matches the card surface so the form reads as ink line work -->
+            <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+              <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#FFFFFF" stroke="#1A2E1F" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#1A2E1F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="wordmark">NutriFlow</span>
+          </div>
+          <div class="logo-caption">Monochrome · Print, favors dark contexts</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 03 — COLOR PALETTE
+  ========================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <h2 class="section-title">Color palette</h2>
+      </div>
+
+      <div class="palette-row">
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #7BAE7F;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Sage</div>
+            <div class="swatch-hex">#7BAE7F</div>
+            <div class="swatch-tag">Calm, grounded, fresh</div>
+          </div>
+        </div>
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #FF6B6B;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Coral</div>
+            <div class="swatch-hex">#FF6B6B</div>
+            <div class="swatch-tag">Warm accent, mindful focus</div>
+          </div>
+        </div>
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #F0B86E;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Amber</div>
+            <div class="swatch-hex">#F0B86E</div>
+            <div class="swatch-tag">Warm-time-of-day, gentle energy</div>
+          </div>
+        </div>
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #D9886B;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Terracotta</div>
+            <div class="swatch-hex">#D9886B</div>
+            <div class="swatch-tag">Earthy, dinner, hearth</div>
+          </div>
+        </div>
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #1A2E1F;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Ink</div>
+            <div class="swatch-hex">#1A2E1F</div>
+            <div class="swatch-tag">Editorial weight</div>
+          </div>
+        </div>
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #FAFAF5; border-bottom: 1px solid var(--border);"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Cream</div>
+            <div class="swatch-hex">#FAFAF5</div>
+            <div class="swatch-tag">Soft canvas, daylight</div>
+          </div>
+        </div>
+
+        <div class="swatch">
+          <div class="swatch-color" style="background: #2D2D2D;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Charcoal</div>
+            <div class="swatch-hex">#2D2D2D</div>
+            <div class="swatch-tag">Honest, readable</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 04 — TYPOGRAPHY IN USE
+  ========================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-num">03</div>
+        <h2 class="section-title">Typography in use</h2>
+      </div>
+
+      <div class="typo-spread">
+
+        <!-- Editorial display -->
+        <div class="typo-col">
+          <div class="typo-eyebrow">From the brand</div>
+          <h3 class="typo-headline">Eat well, simply.</h3>
+          <p class="typo-subhead">A calmer way to track calories — for people who'd rather live than log.</p>
+          <p class="typo-body">NutriFlow trades the spreadsheet feel for a thoughtful editorial calm. Numbers earn their place, illustrations stay quiet, and the person — not the data — stays in focus.</p>
+        </div>
+
+        <!-- In-app typography -->
+        <div class="typo-col">
+          <div class="typo-eyebrow">Inside the app</div>
+          <div class="app-stack">
+            <div class="app-greet-l1">Good evening,</div>
+            <div class="app-greet-l2">Alex</div>
+            <div class="app-cal-num">1,000</div>
+            <div class="app-cal-label">kcal remaining today</div>
+            <div class="app-sec-head">Today's meals</div>
+            <div class="app-meal-name">Greek Yogurt Parfait</div>
+            <div class="app-meal-sub">Honey · granola · blueberries</div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="typo-caption">Fraunces for editorial moments. Nunito for everything else. Together: thoughtful, never clinical.</p>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 05 — BRAND IN USE
+  ========================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-num">04</div>
+        <h2 class="section-title">Brand in use</h2>
+      </div>
+
+      <div class="mockup-grid">
+
+        <!-- Mockup A — App icon -->
+        <div class="mockup-card">
+          <div class="app-icon">
+            <svg width="120" height="120" viewBox="0 0 32 32" fill="none">
+              <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="rgba(255,255,255,0.2)" stroke="#FFFFFF" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#FFFFFF" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="mockup-caption">App icon · iOS / Android</div>
+        </div>
+
+        <!-- Mockup B — Apple Watch face -->
+        <div class="mockup-card">
+          <div class="watch">
+            <div class="watch-screen">
+              <div class="watch-ring">
+                <!-- Same ring SVG structure as design-system §07 — bg + fg circles, dasharray for 50% progress -->
+                <svg viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="54" fill="none" stroke-width="10"/>
+                  <!-- 50% : circumference 2π×54 ≈ 339.29 ; offset = 339.29 × 0.5 ≈ 169.65 -->
+                  <circle class="ring-fg" cx="60" cy="60" r="54" fill="none" stroke-width="10"
+                          stroke-dasharray="339.29" stroke-dashoffset="169.65"/>
+                </svg>
+                <div class="watch-center">
+                  <div class="watch-num">1,000</div>
+                  <div class="watch-of">of 2,000</div>
+                </div>
+              </div>
+            </div>
+            <!-- Digital Crown — sticks out 4px past the right edge of the case -->
+            <div class="watch-crown" aria-hidden="true"></div>
+          </div>
+          <div class="mockup-caption">Apple Watch · Complication view</div>
+        </div>
+
+        <!-- Mockup C — Instagram post -->
+        <div class="mockup-card">
+          <div class="ig-post">
+            <!-- Same noise pattern as hero, different filter id to avoid SVG defs collision -->
+            <svg class="ig-noise" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <filter id="ig-noise-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+                <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0.035 0"/>
+              </filter>
+              <rect width="100%" height="100%" filter="url(#ig-noise-filter)"/>
+            </svg>
+            <div class="ig-leaf">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <p class="ig-quote">"I just want to know if this meal fits — not fill out a form."</p>
+            <div class="ig-attr">— Maria, 32</div>
+            <div class="ig-wordmark">NutriFlow</div>
+          </div>
+          <div class="mockup-caption">Social · Instagram post</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 06 — VOICE & QUOTE
+  ========================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" style="text-align: center;">
+        <div class="section-num">05</div>
+        <h2 class="section-title">Voice</h2>
+      </div>
+
+      <div class="voice-col">
+        <blockquote class="voice-pull">We sound like a thoughtful friend — not a coach, not a clinician. Warm, direct, and never preachy. Numbers fade into the background; the person stays in focus.</blockquote>
+
+        <div class="voice-card">
+          <p class="voice-quote">"I just want to know if this meal fits — not fill out a form."</p>
+          <p class="voice-attr">— Maria, 32, marketing manager + mom</p>
+        </div>
+      </div>
+
+      <div class="stylescape-footer">NutriFlow · Brand Stylescape · 2026</div>
+    </div>
+  </section>
+
+</body>
+</html>

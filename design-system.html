@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriFlow — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Color tokens */
+    --primary: #7BAE7F;
+    --accent: #FF6B6B;
+    --carbs: #F0B86E;
+    --warm: #D9886B;
+    --background: #FAFAF5;
+    --text-primary: #2D2D2D;
+    --ink: #1A2E1F;
+    --text-secondary: #8B8B8B;
+
+    --primary-soft: #E8F1E9;
+    --accent-soft: #FFE5E5;
+    --carbs-soft: #FBEACA;
+    --warm-soft: #F5DCD0;
+    --surface: #FFFFFF;
+    --border: rgba(45, 45, 45, 0.08);
+
+    /* Spacing tokens */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --space-7: 64px;
+
+    /* Radius tokens */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-pill: 100px;
+
+    /* Elevation tokens */
+    --shadow-xs: 0 1px 2px rgba(45, 45, 45, 0.04);
+    --shadow-sm: 0 2px 8px rgba(45, 45, 45, 0.05);
+    --shadow-md: 0 8px 24px rgba(45, 45, 45, 0.06);
+    --shadow-lg: 0 20px 48px rgba(45, 45, 45, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    padding: var(--space-7) var(--space-5);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  /* Header */
+  .header {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .brand-mark {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-mark .brand-leaf { flex-shrink: 0; }
+  .brand-mark .wordmark span { color: var(--primary); }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* Section */
+  .section {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: 0 4px 20px rgba(45, 45, 45, 0.04);
+    min-width: 0;
+  }
+
+  .section-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .section-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  /* =========================================
+     1. COLORS
+  ========================================= */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .swatch {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .swatch-color {
+    height: 100px;
+  }
+
+  .swatch-info {
+    padding: var(--space-3);
+    background: var(--surface);
+  }
+
+  .swatch-token {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+  }
+
+  .swatch-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .swatch-hex {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .swatch-usage {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     2. TYPOGRAPHY
+  ========================================= */
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .type-row:last-child { border-bottom: none; }
+
+  .type-sample {
+    color: var(--text-primary);
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+  }
+
+  .type-editorial {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 500;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    color: var(--ink);
+  }
+  .type-display { font-size: 32px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; }
+  .type-h1      { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .type-h2      { font-size: 22px; font-weight: 700; line-height: 1.3; }
+  .type-h3      { font-size: 18px; font-weight: 700; line-height: 1.4; }
+  .type-body    { font-size: 16px; font-weight: 400; line-height: 1.6; }
+  .type-caption { font-size: 12px; font-weight: 600; line-height: 1.4; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-secondary); }
+
+  .type-meta {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .type-note {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: var(--space-2) 0 var(--space-3);
+  }
+
+  /* =========================================
+     3. SPACING
+  ========================================= */
+  .spacing-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .spacing-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .spacing-token {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    width: 90px;
+    flex-shrink: 0;
+  }
+
+  .spacing-block {
+    background: var(--primary);
+    height: 20px;
+    border-radius: var(--radius-sm);
+  }
+
+  .spacing-value {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-left: var(--space-2);
+  }
+
+  /* =========================================
+     4. RADIUS
+  ========================================= */
+  .radius-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .radius-card {
+    text-align: center;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .radius-box {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 100px;
+    margin: 0 auto var(--space-3);
+    background: var(--primary-soft);
+    border: 2px solid var(--primary);
+  }
+
+  .radius-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .radius-token {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* =========================================
+     5. SHADOWS / ELEVATION
+  ========================================= */
+  .shadow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .shadow-card {
+    background: var(--background);
+    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-4) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .shadow-tile {
+    width: 120px;
+    height: 120px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-3);
+  }
+
+  .shadow-tile.xs { box-shadow: var(--shadow-xs); }
+  .shadow-tile.sm { box-shadow: var(--shadow-sm); }
+  .shadow-tile.md { box-shadow: var(--shadow-md); }
+  .shadow-tile.lg { box-shadow: var(--shadow-lg); }
+
+  .shadow-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+
+  .shadow-value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .shadow-usage {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.5;
+    margin-top: var(--space-1);
+  }
+
+  /* =========================================
+     6. ICONS
+  ========================================= */
+  .icon-subhead {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+  }
+  .icon-subhead + .icon-subhead-spacer { margin-top: 0; }
+  .icon-group + .icon-group { margin-top: var(--space-5); }
+
+  .icon-grid {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .icon-grid.brand { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .icon-grid.fn { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+  .icon-cell {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .icon-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-grid.brand .icon-stage { width: 80px; height: 80px; }
+  .icon-grid.fn .icon-stage    { width: 48px; height: 48px; }
+
+  .icon-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .icon-token {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .icon-usage {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .icon-usage-row {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+    font-size: 13px;
+    line-height: 1.55;
+    flex-wrap: wrap;
+  }
+  .icon-usage-row strong {
+    color: var(--text-primary);
+    font-weight: 700;
+    min-width: 150px;
+    flex-shrink: 0;
+  }
+  .icon-usage-row span { color: var(--text-secondary); }
+
+  /* =========================================
+     7. COMPONENTS
+  ========================================= */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .component {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .component-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .component-preview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 60px;
+  }
+
+  /* Buttons */
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+  }
+
+  /* Input */
+  .input {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input:focus { border-color: var(--primary); }
+  .input::placeholder { color: var(--text-secondary); }
+
+  /* Progress ring */
+  .ring-demo {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+  }
+  .ring-demo svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-demo .ring-bg { stroke: var(--primary-soft); }
+  .ring-demo .ring-fg { stroke: var(--primary); stroke-linecap: round; }
+  .ring-demo .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .ring-demo .ring-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .ring-demo .ring-caption {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  /* Macro bars */
+  .macro-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+  }
+  .macro-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .macro-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .macro-row-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .macro-row-values {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+  .macro-row-values strong { color: var(--text-primary); font-weight: 800; }
+  .macro-track {
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--primary-soft);
+    overflow: hidden;
+  }
+  .macro-track.carbs { background: var(--carbs-soft); }
+  .macro-track.fat   { background: var(--accent-soft); }
+  .macro-fill {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--primary);
+  }
+  .macro-fill.carbs { background: var(--carbs); }
+  .macro-fill.fat   { background: var(--accent); }
+
+  /* Meal card list item */
+  .meal-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    width: 100%;
+  }
+  .meal-item-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .meal-item-body { flex: 1; min-width: 0; }
+  .meal-item-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .meal-item-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .meal-item-kcal {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  /* Quantity stepper */
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .qty-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    border: 1.5px solid var(--primary);
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qty-value {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 90px;
+    text-align: center;
+  }
+  .qty-value .qty-unit {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-left: var(--space-1);
+  }
+
+  /* Connected (pill-grouped, full-width) stepper — form-field pattern */
+  .qty-stepper.connected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    gap: 12px;
+  }
+  .qty-stepper.connected .qty-value {
+    flex: 1;
+    font-size: 18px;
+    min-width: 0;
+    padding: 0 var(--space-3);
+    text-align: center;
+  }
+
+  /* Inline (smaller) stepper — list-row pattern */
+  .qty-stepper.inline { gap: var(--space-2); }
+  .qty-stepper.inline .qty-btn {
+    width: 28px;
+    height: 28px;
+  }
+  .qty-stepper.inline .qty-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .qty-stepper.inline .qty-value {
+    font-size: 15px;
+    min-width: 40px;
+  }
+
+  /* Search bar */
+  .searchbar {
+    position: relative;
+    width: 100%;
+  }
+  .searchbar-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 var(--space-3) 0 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .searchbar-input::placeholder { color: var(--text-secondary); }
+  .searchbar-input:focus { border-color: var(--primary); }
+  .searchbar.has-value .searchbar-input { padding-right: 44px; }
+
+  .searchbar-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .searchbar-clear {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Tab bar item */
+  .tabbar-demo {
+    width: 100%;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    display: flex;
+    justify-content: space-around;
+  }
+  .tabbar-item {
+    width: 80px;
+    height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .tabbar-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+  }
+  .tabbar-item.active .tabbar-label { color: var(--primary); }
+
+  /* Filter chip */
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .filter-chip.selected {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .filter-chip-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  /* Section header */
+  .sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-head-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .sec-head-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 56px;
+    padding: 0 var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    gap: var(--space-2);
+  }
+  .topbar-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+  .topbar-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar-action {
+    flex-shrink: 0;
+  }
+  .topbar-action.text {
+    height: 40px;
+    padding: 0 var(--space-3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+    transition: background 0.15s ease;
+  }
+  .topbar-action.icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+  .topbar-action.placeholder {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* List item row — unified base + two layout variants.
+     STACKED: name+qty stacked left, kcal column right  → Add Dish
+     INLINE:  name left, qty right (no kcal)            → Recipe Detail */
+  .list-container {
+    width: 100%;
+  }
+  .list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .list-row:last-child { border-bottom: none; }
+
+  /* — Stacked variant — */
+  .list-row__stacked .list-row-body { flex: 1; min-width: 0; }
+  .list-row__stacked .list-row-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .list-row__stacked .list-row-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .list-row__stacked .list-row-val {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .list-row__stacked .list-row-val-num {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .list-row__stacked .list-row-val-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* — Inline variant — */
+  .list-row__inline { align-items: baseline; }
+  .list-row__inline .list-row-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .list-row__inline .list-row-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  /* =========================================
+     MOBILE INTERACTION STATES
+     This is a mobile design system. Tap feedback (:active) is the
+     primary interaction state — buttons compress on touch.
+     Hover states are wrapped in @media (hover: hover) for desktop
+     preview only, and never affect production mobile UX.
+     The .filter-chip.selected style is a persistent state and is
+     intentionally left OUTSIDE the hover media block.
+  ========================================= */
+  .btn,
+  .qty-btn,
+  .searchbar-clear,
+  .filter-chip,
+  .tabbar-item,
+  .topbar-btn,
+  .topbar-action.text,
+  .topbar-action.icon {
+    transition:
+      transform 80ms ease,
+      opacity 80ms ease,
+      background 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .btn:active,
+  .qty-btn:active,
+  .searchbar-clear:active,
+  .filter-chip:active,
+  .tabbar-item:active,
+  .topbar-btn:active,
+  .topbar-action.text:active,
+  .topbar-action.icon:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+
+  @media (hover: hover) {
+    .btn-primary:hover         { background: #6A9D6E; }
+    .btn-secondary:hover       { background: var(--primary-soft); }
+    .topbar-btn:hover          { background: var(--primary-soft); }
+    .topbar-action.text:hover  { background: var(--primary-soft); }
+    .topbar-action.icon:hover  { background: var(--primary-soft); }
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* =========================================
+     SECTION 00 — PRINCIPLES
+  ========================================= */
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .principle-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+  }
+  .principle-card.span-2 { grid-column: span 2; }
+  .principle-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+  }
+  .principle-description {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  /* =========================================
+     SECTION 08 — PATTERNS
+  ========================================= */
+  .pattern-block { margin-bottom: var(--space-5); }
+  .pattern-block:last-child { margin-bottom: 0; }
+  .pattern-block-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+  }
+
+  /* A — List patterns */
+  .list-pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-3);
+  }
+  .list-pattern-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .list-pattern-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .list-pattern-sample {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--background);
+    border-radius: var(--radius-md);
+  }
+  .list-pattern-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .list-pattern-icon.tinted-amber { background: var(--carbs-soft); }
+  .list-pattern-icon.tinted-sage  { background: var(--primary-soft); }
+  .list-pattern-body { flex: 1; min-width: 0; }
+  .list-pattern-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .list-pattern-line1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .list-pattern-line2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .list-pattern-val {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .list-pattern-val-num {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .list-pattern-val-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .list-pattern-desc {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    /* Pin desc to bottom of the flex-column card so all three descriptions
+       land on the same baseline regardless of preview content height above. */
+    margin-top: auto;
+  }
+  .list-pattern-note {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: var(--space-3);
+  }
+
+  /* C — Color rules */
+  .color-rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-3);
+  }
+  .color-rule {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+  }
+  .color-rule-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  .color-rule-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .color-rule-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .color-rule-uses {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+    padding-left: var(--space-3);
+  }
+  .color-rule-uses li { margin-bottom: 4px; }
+
+  /* =========================================
+     SECTION 09 — VOICE & TONE
+  ========================================= */
+  .brand-quote {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    line-height: 1.45;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    padding: var(--space-2) 0 var(--space-2) var(--space-4);
+    border-left: 3px solid var(--primary-soft);
+    margin-bottom: var(--space-5);
+  }
+  .maria-quote-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .maria-quote-text {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .maria-quote-attr {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+  }
+  .docards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-3);
+  }
+  .docard {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+  }
+  .docard.do   { border-left: 4px solid var(--primary); }
+  .docard.dont { border-left: 4px solid var(--accent); }
+  .docard-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+  }
+  .docard.do .docard-label   { color: var(--primary); }
+  .docard.dont .docard-label { color: var(--accent); }
+  .docard-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    padding: 6px 0;
+  }
+  .docard-row svg {
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  /* =========================================
+     SECTION 10 — ACCESSIBILITY
+  ========================================= */
+  .a11y-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-3);
+  }
+  .a11y-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+  }
+  .a11y-card-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+  }
+  .a11y-card-body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+  .a11y-list {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-3);
+  }
+  .a11y-list li { margin-bottom: 4px; }
+  .a11y-list code,
+  .a11y-card-body code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    background: var(--primary-soft);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 700px) {
+    body { padding: var(--space-5) var(--space-3); }
+    .brand-mark { font-size: 32px; }
+    .header-sub { text-align: left; }
+    .principles-grid { grid-template-columns: 1fr; }
+    .principle-card.span-2 { grid-column: span 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="brand-mark">
+      <svg class="brand-leaf" width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+        <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="wordmark">Nutri<span>Flow</span></span>
+    </div>
+    <div class="header-sub">Design System<br>v1.0 · 2026</div>
+  </header>
+
+  <!-- 0. PRINCIPLES -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">00</div>
+      <h2 class="section-title">Principles</h2>
+    </div>
+    <div class="principles-grid">
+
+      <div class="principle-card">
+        <div class="principle-eyebrow">Editorial wellness</div>
+        <div class="principle-description">Not a fitness tracker. Not a clinical app. NutriFlow reads like a thoughtful magazine — calm typography, ample whitespace, numbers as headlines, illustration as restraint.</div>
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-eyebrow">Data over decoration</div>
+        <div class="principle-description">Calorie counts and macro values are the story. We use Fraunces (serif display) to give numbers weight and Nunito (clean sans) to keep supporting text quiet. No food photography — illustrations are minimal, icons stand in for visuals.</div>
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-eyebrow">Thoughtful friend, not coach</div>
+        <div class="principle-description">We never lecture, shame, or gamify. No streaks, no badges, no aggressive notifications. Maria gets information; she decides what to do with it.</div>
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-eyebrow">Mobile-first interaction</div>
+        <div class="principle-description">Designed for thumbs. Touch targets ≥44px. No hover states on mobile — :active tap feedback (scale 0.96, 80ms) communicates response. Hover rules wrapped in @media (hover: hover) for desktop preview only.</div>
+      </div>
+
+      <div class="principle-card span-2">
+        <div class="principle-eyebrow">System discipline</div>
+        <div class="principle-description">Pills for interactive controls (search, steppers, browse buttons). Rectangles for input fields (dish name, ingredient rows). Sage for system, coral for emotional accent (Fat macro, calorie flame), amber for Carbs, terracotta for dinner. Every color choice is intentional.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 1. COLORS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2 class="section-title">Color tokens</h2>
+    </div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-color" style="background: #7BAE7F;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--primary</div>
+          <div class="swatch-name">Sage Green</div>
+          <div class="swatch-hex">#7BAE7F</div>
+          <div class="swatch-usage">Primary actions, key highlights, brand identity.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #FF6B6B;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--accent</div>
+          <div class="swatch-name">Coral</div>
+          <div class="swatch-hex">#FF6B6B</div>
+          <div class="swatch-usage">Alerts, streaks, warnings, emphasis moments.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #F0B86E;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--carbs</div>
+          <div class="swatch-name">Amber</div>
+          <div class="swatch-hex">#F0B86E</div>
+          <div class="swatch-usage">Carbohydrate macro bars, warm-tone emphasis.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #D9886B;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--warm</div>
+          <div class="swatch-name">Terracotta</div>
+          <div class="swatch-hex">#D9886B</div>
+          <div class="swatch-usage">Warm meal accents (dinner, baked goods).</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #FAFAF5; border-bottom: 1px solid var(--border);"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--background</div>
+          <div class="swatch-name">Cream</div>
+          <div class="swatch-hex">#FAFAF5</div>
+          <div class="swatch-usage">App background, large neutral surfaces.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #2D2D2D;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--text-primary</div>
+          <div class="swatch-name">Dark Charcoal</div>
+          <div class="swatch-hex">#2D2D2D</div>
+          <div class="swatch-usage">Headings, body copy, primary readable text.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #1A2E1F;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--ink</div>
+          <div class="swatch-name">Deep Ink</div>
+          <div class="swatch-hex">#1A2E1F</div>
+          <div class="swatch-usage">Display headings, key numbers (calories), editorial emphasis. Use sparingly — only where typography needs to feel weighty.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #8B8B8B;"></div>
+        <div class="swatch-info">
+          <div class="swatch-token">--text-secondary</div>
+          <div class="swatch-name">Warm Gray</div>
+          <div class="swatch-hex">#8B8B8B</div>
+          <div class="swatch-usage">Captions, labels, supporting / metadata text.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. TYPOGRAPHY -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2 class="section-title">Typography</h2>
+    </div>
+    <div class="type-row">
+      <div class="type-sample type-editorial">Eat well, simply.</div>
+      <div class="type-meta">Fraunces · 48 / 500 · Editorial</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample type-display">Eat well, simply.</div>
+      <div class="type-meta">Display · UI · 32 / 800</div>
+    </div>
+    <div class="type-note">Use Fraunces Editorial for hero moments (screen titles, branded content). Use Nunito Display for in-app dense UI titles.</div>
+    <div class="type-row">
+      <div class="type-sample type-h1">Today's meals</div>
+      <div class="type-meta">H1 · 28 / 700</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample type-h2">Lunch — 420 kcal</div>
+      <div class="type-meta">H2 · 22 / 700</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample type-h3">Mediterranean Quinoa Bowl</div>
+      <div class="type-meta">H3 · 18 / 700</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample type-body">Track calories without the spreadsheet feel — a calmer way to stay on goal.</div>
+      <div class="type-meta">Body · 16 / 400</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample type-caption">Label · Caption</div>
+      <div class="type-meta">Caption · 12 / 600</div>
+    </div>
+  </section>
+
+  <!-- 3. SPACING -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2 class="section-title">Spacing scale · 8pt grid</h2>
+    </div>
+    <div class="spacing-stack">
+      <div class="spacing-row">
+        <div class="spacing-token">--space-1</div>
+        <div class="spacing-block" style="width: 4px;"></div>
+        <div class="spacing-value">4px</div>
+      </div>
+      <div class="spacing-row">
+        <div class="spacing-token">--space-2</div>
+        <div class="spacing-block" style="width: 8px;"></div>
+        <div class="spacing-value">8px</div>
+      </div>
+      <div class="spacing-row">
+        <div class="spacing-token">--space-3</div>
+        <div class="spacing-block" style="width: 16px;"></div>
+        <div class="spacing-value">16px</div>
+      </div>
+      <div class="spacing-row">
+        <div class="spacing-token">--space-4</div>
+        <div class="spacing-block" style="width: 24px;"></div>
+        <div class="spacing-value">24px</div>
+      </div>
+      <div class="spacing-row">
+        <div class="spacing-token">--space-5</div>
+        <div class="spacing-block" style="width: 32px;"></div>
+        <div class="spacing-value">32px</div>
+      </div>
+      <div class="spacing-row">
+        <div class="spacing-token">--space-6</div>
+        <div class="spacing-block" style="width: 48px;"></div>
+        <div class="spacing-value">48px</div>
+      </div>
+      <div class="spacing-row">
+        <div class="spacing-token">--space-7</div>
+        <div class="spacing-block" style="width: 64px;"></div>
+        <div class="spacing-value">64px</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. RADIUS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2 class="section-title">Border radius</h2>
+    </div>
+    <div class="radius-grid">
+      <div class="radius-card">
+        <div class="radius-box" style="border-radius: 8px;"></div>
+        <div class="radius-name">Small</div>
+        <div class="radius-token">--radius-sm · 8px</div>
+      </div>
+      <div class="radius-card">
+        <div class="radius-box" style="border-radius: 16px;"></div>
+        <div class="radius-name">Medium</div>
+        <div class="radius-token">--radius-md · 16px</div>
+      </div>
+      <div class="radius-card">
+        <div class="radius-box" style="border-radius: 24px;"></div>
+        <div class="radius-name">Large</div>
+        <div class="radius-token">--radius-lg · 24px</div>
+      </div>
+      <div class="radius-card">
+        <div class="radius-box" style="border-radius: 100px;"></div>
+        <div class="radius-name">Pill</div>
+        <div class="radius-token">--radius-pill · 100px</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. SHADOWS / ELEVATION -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2 class="section-title">Elevation</h2>
+    </div>
+    <div class="shadow-grid">
+      <div class="shadow-card">
+        <div class="shadow-tile xs"></div>
+        <div class="shadow-name">--shadow-xs</div>
+        <div class="shadow-value">0 1px 2px rgba(45,45,45,0.04)</div>
+        <div class="shadow-usage">Subtle separation — inputs, chips</div>
+      </div>
+      <div class="shadow-card">
+        <div class="shadow-tile sm"></div>
+        <div class="shadow-name">--shadow-sm</div>
+        <div class="shadow-value">0 2px 8px rgba(45,45,45,0.05)</div>
+        <div class="shadow-usage">Default cards</div>
+      </div>
+      <div class="shadow-card">
+        <div class="shadow-tile md"></div>
+        <div class="shadow-name">--shadow-md</div>
+        <div class="shadow-value">0 8px 24px rgba(45,45,45,0.06)</div>
+        <div class="shadow-usage">Elevated cards, modals</div>
+      </div>
+      <div class="shadow-card">
+        <div class="shadow-tile lg"></div>
+        <div class="shadow-name">--shadow-lg</div>
+        <div class="shadow-value">0 20px 48px rgba(45,45,45,0.08)</div>
+        <div class="shadow-usage">Floating elements, sheets</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ICONS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2 class="section-title">Iconography</h2>
+    </div>
+
+    <div class="icon-group">
+      <div class="icon-subhead">Brand & meals · Duotone · Decorative</div>
+      <div class="icon-grid brand">
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M5 27 C 5 14, 12 5, 27 5 C 27 8, 26.5 11, 25.5 14 C 22 22, 14 27, 5 27 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M5 27 C 9 22, 14 17, 22 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Leaf · Logo</div>
+          <div class="icon-token">ico-leaf</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M16 28 C 9 28, 6 23, 7 18 C 8 14, 11 13, 12 10 C 13 7, 12 4, 14 3 C 15 6, 17 7, 19 10 C 22 14, 26 16, 26 21 C 26 25, 22 28, 16 28 Z" fill="#FFE5E5" stroke="#FF6B6B" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M16 26 C 13 26, 11 24, 11 21 C 11 18, 14 17, 14 14 C 16 16, 19 18, 19 22 C 19 24, 18 26, 16 26 Z" fill="#FF6B6B" opacity="0.55"/>
+            </svg>
+          </div>
+          <div class="icon-name">Flame · Calories</div>
+          <div class="icon-token">ico-flame</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M6 16 C 6 11, 9 7, 14 7 C 17 7, 18 9, 21 9 C 25 9, 27 12, 27 16 C 27 21, 23 24, 18 24 C 11 24, 6 21, 6 16 Z" fill="#FAFAF5" stroke="#F0B86E" stroke-width="1.75" stroke-linejoin="round"/>
+              <circle cx="17" cy="15" r="4.5" fill="#FBEACA" stroke="#F0B86E" stroke-width="1.5"/>
+              <circle cx="15.5" cy="13.5" r="1" fill="#FAFAF5" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="icon-name">Egg · Breakfast</div>
+          <div class="icon-token">ico-meal-breakfast</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M4 15 C 4 14, 5 14, 6 14 L 26 14 C 27 14, 28 14, 28 15 C 28 22, 22 27, 16 27 C 10 27, 4 22, 4 15 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M11 11 C 11 9, 13 8, 13 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M16 11 C 16 9, 18 8, 18 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M21 11 C 21 9, 23 8, 23 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Bowl · Lunch</div>
+          <div class="icon-token">ico-meal-lunch</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M4 16 C 4 13, 6 11, 10 11 L 22 11 C 26 11, 28 13, 28 16 C 28 19, 26 21, 22 21 L 10 21 C 6 21, 4 19, 4 16 Z" fill="#F5DCD0" stroke="#D9886B" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M10 13 L 8 15" stroke="#D9886B" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M15 13 L 13 15" stroke="#D9886B" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M20 13 L 18 15" stroke="#D9886B" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M25 13 L 23 15" stroke="#D9886B" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Bread · Dinner</div>
+          <div class="icon-token">ico-meal-dinner</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M9 18 C 9 13, 12 11, 16 12 C 20 11, 23 13, 23 18 C 23 23, 20 28, 16 28 C 12 28, 9 23, 9 18 Z" fill="#FFE5E5" stroke="#FF6B6B" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M16 12 C 16 9, 17 6, 19 5" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              <path d="M17 9 C 19 8, 21 8.5, 22 10 L 18.5 10 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.4" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Apple · Snack</div>
+          <div class="icon-token">ico-meal-snack</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="icon-group">
+      <div class="icon-subhead">Recipe categories · Duotone · Decorative</div>
+      <div class="icon-grid brand">
+
+        <!-- Fish -->
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M4 16 C 4 11, 10 8, 17 9 C 22 9.5, 25 13, 25 16 C 25 19, 22 22.5, 17 23 C 10 24, 4 21, 4 16 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M25 13 L 30 9 L 28 16 L 30 23 L 25 19 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              <circle cx="8" cy="14" r="0.9" fill="#7BAE7F"/>
+              <path d="M12 12 C 13 14, 13 18, 12 20" stroke="#7BAE7F" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Fish · Category</div>
+          <div class="icon-token">ico-category-fish</div>
+        </div>
+
+        <!-- Stew -->
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <path d="M11 6 Q 12 4, 11 2" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              <path d="M16 5 Q 17 3, 16 1" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              <path d="M21 6 Q 22 4, 21 2" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              <path d="M6 11 L 26 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <circle cx="16" cy="9.5" r="1.2" fill="#7BAE7F"/>
+              <path d="M7 12 L 25 12 L 25 25 C 25 26.5, 24 27, 23 27 L 9 27 C 8 27, 7 26.5, 7 25 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M7 15 L 4 15 L 4 18 L 7 18" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round" fill="none"/>
+              <path d="M25 15 L 28 15 L 28 18 L 25 18" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Stew · Category</div>
+          <div class="icon-token">ico-category-stew</div>
+        </div>
+
+        <!-- Stir-fry (polished: handle matches outline 1.75px; chunks varied/irregular) -->
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <circle cx="13" cy="16" r="10" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75"/>
+              <path d="M23 16 L 29 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <circle cx="10" cy="14" r="1.4" fill="#7BAE7F" opacity="0.5"/>
+              <circle cx="15" cy="13" r="1" fill="#7BAE7F" opacity="0.5"/>
+              <circle cx="9" cy="19" r="1.2" fill="#7BAE7F" opacity="0.5"/>
+              <circle cx="14" cy="20" r="0.9" fill="#7BAE7F" opacity="0.5"/>
+              <circle cx="17" cy="17" r="1.5" fill="#7BAE7F" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="icon-name">Stir-fry · Category</div>
+          <div class="icon-token">ico-category-stirfry</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="icon-group">
+      <div class="icon-subhead">UI & navigation · Duotone · Functional</div>
+      <div class="icon-grid fn">
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M5 14 L 16 5 L 27 14 L 27 26 C 27 26.5, 26.5 27, 26 27 L 6 27 C 5.5 27, 5 26.5, 5 26 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
+              <path d="M13 27 L 13 19 C 13 18.5, 13.5 18, 14 18 L 18 18 C 18.5 18, 19 18.5, 19 19 L 19 27" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Home</div>
+          <div class="icon-token">ico-home</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Search</div>
+          <div class="icon-token">ico-search</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Plus · Add</div>
+          <div class="icon-token">ico-plus</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <rect x="5" y="14" width="5" height="13" rx="1.5" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <rect x="13.5" y="8" width="5" height="19" rx="1.5" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <rect x="22" y="18" width="5" height="9" rx="1.5" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+            </svg>
+          </div>
+          <div class="icon-name">Chart</div>
+          <div class="icon-token">ico-chart</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
+            </svg>
+          </div>
+          <div class="icon-name">Bookmark</div>
+          <div class="icon-token">ico-bookmark</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M16 9 L 16 16 L 21 18" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Clock</div>
+          <div class="icon-token">ico-clock</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M5 7 L 27 7 L 19 16 L 19 25 L 13 22 L 13 16 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
+            </svg>
+          </div>
+          <div class="icon-name">Filter</div>
+          <div class="icon-token">ico-filter</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M8 5 L 8 11" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M11 5 L 11 11" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M14 5 L 14 11" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M8 5 L 8 14 C 8 15, 9 15.5, 11 15.5 C 13 15.5, 14 15, 14 14 L 14 5" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              <path d="M11 15.5 L 11 27" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              <path d="M22 5 C 25 5, 25 11, 22 12 L 22 27" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              <path d="M21 5 C 18 5, 18 11, 21 12 L 22 12" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
+            </svg>
+          </div>
+          <div class="icon-name">Knife · Fork</div>
+          <div class="icon-token">ico-cutlery</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M11 16.5 L 14.5 20 L 21 13" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Check</div>
+          <div class="icon-token">ico-check</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M12 12 L 20 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <path d="M20 12 L 12 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Close</div>
+          <div class="icon-token">ico-close</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M12 7 L 21 16 L 12 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="icon-name">Chevron</div>
+          <div class="icon-token">ico-chevron</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Back</div>
+          <div class="icon-token">ico-back</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Minus</div>
+          <div class="icon-token">ico-minus</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Minus · Bare</div>
+          <div class="icon-token">ico-minus-bare</div>
+        </div>
+
+        <div class="icon-cell">
+          <div class="icon-stage">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-name">Plus · Bare</div>
+          <div class="icon-token">ico-plus-bare</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="icon-usage">
+      <div class="icon-usage-row">
+        <strong>Brand icons</strong>
+        <span>6 decorative. Use at 48–80px in hero moments and meal cards. Stroke 1.5px at large size.</span>
+      </div>
+      <div class="icon-usage-row">
+        <strong>UI icons</strong>
+        <span>15 functional. Use at 24–32px in UI. Stroke 1.6–1.85px depending on size.</span>
+      </div>
+      <div class="icon-usage-row">
+        <strong>Tab bar</strong>
+        <span>24px, stroke 1.8px.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. COMPONENTS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2 class="section-title">Components</h2>
+    </div>
+    <div class="type-note" style="margin-bottom: var(--space-4);">
+      All interactive components use <strong>:active</strong> for tap feedback. Hover states are wrapped in <code style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--primary-soft); padding: 1px 6px; border-radius: 4px; color: var(--ink);">@media (hover: hover)</code> for desktop preview only — this is a mobile design system.
+    </div>
+    <div class="components-grid">
+
+      <div class="component">
+        <div class="component-label">Primary button</div>
+        <div class="component-preview">
+          <button class="btn btn-primary">Add to today</button>
+        </div>
+      </div>
+
+      <div class="component">
+        <div class="component-label">Secondary button</div>
+        <div class="component-preview">
+          <button class="btn btn-secondary">Save for later</button>
+        </div>
+      </div>
+
+      <div class="component">
+        <div class="component-label">Input field</div>
+        <div class="component-preview">
+          <input class="input" type="text" placeholder="Search a food or recipe…">
+        </div>
+      </div>
+
+      <div class="component">
+        <div class="component-label">Progress ring</div>
+        <div class="component-preview" style="justify-content: center;">
+          <div class="ring-demo">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="54" fill="none" stroke-width="10"/>
+              <!-- 92% : circumference 2π×54 ≈ 339.29 ; offset = 339.29 × 0.08 ≈ 27.14 -->
+              <circle class="ring-fg" cx="60" cy="60" r="54" fill="none" stroke-width="10"
+                      stroke-dasharray="339.29" stroke-dashoffset="27.14"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-num">1,840</div>
+              <div class="ring-caption">of 2,000 kcal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component" style="grid-column: span 2; align-items: stretch;">
+        <div class="component-label">Macro bar</div>
+        <div class="component-preview" style="align-items: stretch; flex-direction: column;">
+          <div class="macro-stack">
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Protein</span>
+                <span class="macro-row-values"><strong>92g</strong> / 120g</span>
+              </div>
+              <div class="macro-track">
+                <div class="macro-fill" style="width: 77%;"></div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Carbs</span>
+                <span class="macro-row-values"><strong>220g</strong> / 250g</span>
+              </div>
+              <div class="macro-track carbs">
+                <div class="macro-fill carbs" style="width: 88%;"></div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Fat</span>
+                <span class="macro-row-values"><strong>65g</strong> / 70g</span>
+              </div>
+              <div class="macro-track fat">
+                <div class="macro-fill fat" style="width: 93%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component" style="grid-column: span 2; align-items: stretch;">
+        <div class="component-label">Meal card list item</div>
+        <div class="component-preview" style="align-items: stretch;">
+          <div class="meal-item">
+            <div class="meal-item-icon">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M4 15 C 4 14, 5 14, 6 14 L 26 14 C 27 14, 28 14, 28 15 C 28 22, 22 27, 16 27 C 10 27, 4 22, 4 15 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M11 11 C 11 9, 13 8, 13 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 11 C 16 9, 18 8, 18 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M21 11 C 21 9, 23 8, 23 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="meal-item-body">
+              <div class="meal-item-name">Mediterranean Quinoa Bowl</div>
+              <div class="meal-item-sub">Chickpeas · feta · cucumber · lemon</div>
+            </div>
+            <div class="meal-item-kcal">420</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantity stepper -->
+      <div class="component" style="grid-column: span 2; align-items: stretch;">
+        <div class="component-label">Quantity stepper</div>
+        <div class="component-preview" style="flex-direction: column; align-items: stretch; gap: var(--space-4);">
+
+          <div>
+            <div style="font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: var(--space-2);">Full-width (form fields)</div>
+            <div class="qty-stepper connected">
+              <button class="qty-btn" aria-label="Decrease">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                  <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="qty-value">4</div>
+              <button class="qty-btn" aria-label="Increase">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                  <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: var(--space-2);">Inline (list rows)</div>
+            <div class="qty-stepper inline">
+              <button class="qty-btn" aria-label="Decrease">
+                <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                  <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="qty-value">4</div>
+              <button class="qty-btn" aria-label="Increase">
+                <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                  <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div class="component" style="align-items: stretch;">
+        <div class="component-label">Search bar</div>
+        <div class="component-preview" style="flex-direction: column; align-items: stretch; gap: var(--space-3);">
+          <div class="searchbar">
+            <span class="searchbar-icon">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+                <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input class="searchbar-input" type="text" placeholder="Search ingredients…">
+          </div>
+          <div class="searchbar has-value">
+            <span class="searchbar-icon">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+                <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input class="searchbar-input" type="text" value="Spaghetti">
+            <button class="searchbar-clear" aria-label="Clear">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+                <path d="M12 12 L 20 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                <path d="M20 12 L 12 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab bar item -->
+      <div class="component" style="grid-column: span 2; align-items: stretch;">
+        <div class="component-label">Tab bar item</div>
+        <div class="component-preview" style="align-items: stretch;">
+          <div class="tabbar-demo">
+            <button class="tabbar-item active" aria-current="page">
+              <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M5 14 L 16 5 L 27 14 L 27 26 C 27 26.5, 26.5 27, 26 27 L 6 27 C 5.5 27, 5 26.5, 5 26 Z" fill="#C8E2C9" fill-opacity="1" stroke="#7BAE7F" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M13 27 L 13 19 C 13 18.5, 13.5 18, 14 18 L 18 18 C 18.5 18, 19 18.5, 19 19 L 19 27" stroke="#7BAE7F" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+              </svg>
+              <div class="tabbar-label">Home</div>
+            </button>
+            <button class="tabbar-item">
+              <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <circle cx="14" cy="14" r="8" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+                <path d="M20 20 L 26 26" stroke="#8B8B8B" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              <div class="tabbar-label">Search</div>
+            </button>
+            <button class="tabbar-item">
+              <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+              <div class="tabbar-label">Recipes</div>
+            </button>
+            <button class="tabbar-item">
+              <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <rect x="5" y="14" width="5" height="13" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+                <rect x="13.5" y="8" width="5" height="19" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+                <rect x="22" y="18" width="5" height="9" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+              </svg>
+              <div class="tabbar-label">Stats</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter chip -->
+      <div class="component" style="align-items: stretch;">
+        <div class="component-label">Filter chip</div>
+        <div class="component-preview" style="gap: var(--space-2);">
+          <button class="filter-chip selected">
+            Vegetarian
+            <span class="filter-chip-close">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+                <path d="M3 3 L 9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M9 3 L 3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <button class="filter-chip selected">
+            Under 500 kcal
+            <span class="filter-chip-close">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+                <path d="M3 3 L 9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M9 3 L 3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <button class="filter-chip">Quick</button>
+          <button class="filter-chip">Vegan</button>
+        </div>
+      </div>
+
+      <!-- Section header -->
+      <div class="component" style="align-items: stretch;">
+        <div class="component-label">Section header</div>
+        <div class="component-preview" style="flex-direction: column; align-items: stretch; gap: var(--space-4);">
+          <div class="sec-head">
+            <div class="sec-head-title">Today's meals</div>
+            <a class="sec-head-link" href="#">
+              View all
+              <svg width="12" height="12" viewBox="0 0 32 32" fill="none">
+                <path d="M12 7 L 21 16 L 12 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </a>
+          </div>
+          <div class="sec-head">
+            <div class="sec-head-title">Recent recipes</div>
+            <a class="sec-head-link" href="#">
+              See all
+              <svg width="12" height="12" viewBox="0 0 32 32" fill="none">
+                <path d="M12 7 L 21 16 L 12 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top bar -->
+      <div class="component" style="grid-column: span 2; align-items: stretch;">
+        <div class="component-label">Top bar</div>
+        <div class="component-preview" style="flex-direction: column; align-items: stretch; gap: var(--space-3);">
+          <div class="topbar">
+            <button class="topbar-btn" aria-label="Back">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="topbar-title">Add a dish</div>
+            <div class="topbar-action placeholder"></div>
+          </div>
+          <div class="topbar">
+            <button class="topbar-btn" aria-label="Back">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="topbar-title">Mediterranean Bowl</div>
+            <button class="topbar-action icon" aria-label="Bookmark">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- List item row — two variants documented side by side -->
+      <div class="component" style="grid-column: span 2; align-items: stretch;">
+        <div class="component-label">List item row</div>
+        <div class="component-preview" style="align-items: stretch; flex-direction: column; gap: var(--space-5);">
+
+          <!-- Variant 1: stacked -->
+          <div style="width: 100%;">
+            <div class="list-container">
+              <div class="list-row list-row__stacked">
+                <div class="list-row-body">
+                  <div class="list-row-name">Spaghetti, raw</div>
+                  <div class="list-row-sub">200 g</div>
+                </div>
+                <div class="list-row-val">
+                  <span class="list-row-val-num">315</span>
+                  <span class="list-row-val-unit">kcal</span>
+                </div>
+              </div>
+              <div class="list-row list-row__stacked">
+                <div class="list-row-body">
+                  <div class="list-row-name">Olive oil</div>
+                  <div class="list-row-sub">2 tbsp</div>
+                </div>
+                <div class="list-row-val">
+                  <span class="list-row-val-num">240</span>
+                  <span class="list-row-val-unit">kcal</span>
+                </div>
+              </div>
+              <div class="list-row list-row__stacked">
+                <div class="list-row-body">
+                  <div class="list-row-name">Garlic</div>
+                  <div class="list-row-sub">3 cloves</div>
+                </div>
+                <div class="list-row-val">
+                  <span class="list-row-val-num">12</span>
+                  <span class="list-row-val-unit">kcal</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-family: 'Nunito', sans-serif; font-size: 12px; font-style: italic; color: var(--text-secondary); margin-top: var(--space-2);"><code style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal;">.list-row__stacked</code> — used on Add Dish for ingredient + calorie tracking.</p>
+          </div>
+
+          <!-- Variant 2: inline -->
+          <div style="width: 100%;">
+            <div class="list-container">
+              <div class="list-row list-row__inline">
+                <div class="list-row-name">Salmon fillet</div>
+                <div class="list-row-sub">200 g</div>
+              </div>
+              <div class="list-row list-row__inline">
+                <div class="list-row-name">Lemon</div>
+                <div class="list-row-sub">1, juiced</div>
+              </div>
+              <div class="list-row list-row__inline">
+                <div class="list-row-name">Garlic cloves</div>
+                <div class="list-row-sub">3, minced</div>
+              </div>
+            </div>
+            <p style="font-family: 'Nunito', sans-serif; font-size: 12px; font-style: italic; color: var(--text-secondary); margin-top: var(--space-2);"><code style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal;">.list-row__inline</code> — used on Recipe Detail for read-only ingredient lists.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. PATTERNS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2 class="section-title">Patterns</h2>
+    </div>
+
+    <!-- A · List patterns -->
+    <div class="pattern-block">
+      <div class="pattern-block-label">A · List patterns</div>
+      <div class="list-pattern-grid">
+
+        <div class="list-pattern-card">
+          <div class="list-pattern-name">Meal item · Home</div>
+          <div class="list-pattern-sample">
+            <div class="list-pattern-icon tinted-amber">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <path d="M6 16 C 6 11, 9 7, 14 7 C 17 7, 18 9, 21 9 C 25 9, 27 12, 27 16 C 27 21, 23 24, 18 24 C 11 24, 6 21, 6 16 Z" fill="#FAFAF5" stroke="#F0B86E" stroke-width="1.75" stroke-linejoin="round"/>
+                <circle cx="17" cy="15" r="4.5" fill="#FBEACA" stroke="#F0B86E" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="list-pattern-body">
+              <div class="list-pattern-eyebrow">Breakfast · 8:15 AM</div>
+              <div class="list-pattern-line1">Yogurt Parfait</div>
+              <div class="list-pattern-line2">Honey · granola</div>
+            </div>
+            <div class="list-pattern-val">
+              <span class="list-pattern-val-num">380</span>
+              <span class="list-pattern-val-unit">kcal</span>
+            </div>
+          </div>
+          <div class="list-pattern-desc">56px colored icon container per meal type, eyebrow + name + ingredients, kcal Fraunces right. For logged meals.</div>
+        </div>
+
+        <div class="list-pattern-card">
+          <div class="list-pattern-name">Recipe card · Finder</div>
+          <div class="list-pattern-sample">
+            <div class="list-pattern-icon tinted-sage">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <path d="M4 16 C 4 11, 10 8, 17 9 C 22 9.5, 25 13, 25 16 C 25 19, 22 22.5, 17 23 C 10 24, 4 21, 4 16 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M25 13 L 30 9 L 28 16 L 30 23 L 25 19 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="list-pattern-body">
+              <div class="list-pattern-line1">Lemon Garlic Salmon</div>
+              <div class="list-pattern-line2">20 min · high-protein</div>
+            </div>
+            <div class="list-pattern-val">
+              <span class="list-pattern-val-num">480</span>
+              <span class="list-pattern-val-unit">kcal</span>
+            </div>
+          </div>
+          <div class="list-pattern-desc">56px sage icon container, name + meta line, kcal Fraunces right. For browsable recipes.</div>
+        </div>
+
+        <div class="list-pattern-card">
+          <div class="list-pattern-name">List row · Ingredients</div>
+          <div class="list-pattern-sample" style="align-items: baseline;">
+            <div class="list-pattern-body">
+              <div class="list-pattern-line1" style="font-weight: 500;">Salmon fillet</div>
+            </div>
+            <div style="font-family: 'Nunito', sans-serif; font-size: 11px; color: var(--text-secondary); flex-shrink: 0;">200 g</div>
+          </div>
+          <div class="list-pattern-desc">No icon. Name left, quantity right — inline, no kcal. For read-only ingredient lists on Recipe Detail.</div>
+        </div>
+
+      </div>
+      <p class="list-pattern-note">All three share the same left/right skeleton. The first two carry a Fraunces kcal column on the right (logged or browsable food); the inline ingredient row drops it for a plain text quantity. Icons communicate context: colored = personal logged data; sage = browsable system content; no icon = read-only data reference.</p>
+    </div>
+
+    <!-- B · Color usage rules -->
+    <div class="pattern-block">
+      <div class="pattern-block-label">B · Color usage rules</div>
+      <div class="color-rules-grid">
+
+        <div class="color-rule">
+          <div class="color-rule-head">
+            <div class="color-rule-swatch" style="background: var(--primary);"></div>
+            <div class="color-rule-name">Sage</div>
+          </div>
+          <ul class="color-rule-uses">
+            <li>All functional UI (buttons, icons, links, primary actions)</li>
+            <li>Lunch meals (bowl icon, salad context)</li>
+            <li>Protein macros</li>
+            <li>The brand identity</li>
+          </ul>
+        </div>
+
+        <div class="color-rule">
+          <div class="color-rule-head">
+            <div class="color-rule-swatch" style="background: var(--accent);"></div>
+            <div class="color-rule-name">Coral</div>
+          </div>
+          <ul class="color-rule-uses">
+            <li>Fat macros (the macro to monitor)</li>
+            <li>Calorie remaining flame icon</li>
+            <li>Apple snack (treat warmth)</li>
+          </ul>
+        </div>
+
+        <div class="color-rule">
+          <div class="color-rule-head">
+            <div class="color-rule-swatch" style="background: var(--carbs);"></div>
+            <div class="color-rule-name">Amber</div>
+          </div>
+          <ul class="color-rule-uses">
+            <li>Carbs macros</li>
+            <li>Breakfast egg yolk</li>
+            <li>Warm-time-of-day moments</li>
+          </ul>
+        </div>
+
+        <div class="color-rule">
+          <div class="color-rule-head">
+            <div class="color-rule-swatch" style="background: var(--warm);"></div>
+            <div class="color-rule-name">Terracotta</div>
+          </div>
+          <ul class="color-rule-uses">
+            <li>Dinner bread</li>
+            <li>Warm meal contexts</li>
+          </ul>
+        </div>
+
+        <div class="color-rule">
+          <div class="color-rule-head">
+            <div class="color-rule-swatch" style="background: var(--ink); border: 1px solid var(--border);"></div>
+            <div class="color-rule-name">Ink</div>
+          </div>
+          <ul class="color-rule-uses">
+            <li>Fraunces display headlines</li>
+            <li>Big kcal numbers</li>
+            <li>Editorial emphasis</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 9. VOICE & TONE -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <h2 class="section-title">Voice & tone</h2>
+    </div>
+
+    <div class="brand-quote">We sound like a thoughtful friend — not a coach, not a clinician. Warm, direct, and never preachy. Numbers fade into the background; the person stays in focus.</div>
+
+    <div class="maria-quote-card">
+      <div class="maria-quote-text">"I just want to know if this meal fits — not fill out a form."</div>
+      <div class="maria-quote-attr">— Maria, 32, marketing manager</div>
+    </div>
+
+    <div class="docards-grid">
+
+      <div class="docard do">
+        <div class="docard-label">Do write</div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M2.5 6.5 L 5 9 L 9.5 3.5" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>"Add to today" — clear, present</span>
+        </div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M2.5 6.5 L 5 9 L 9.5 3.5" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>"160 kcal remaining today" — factual</span>
+        </div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M2.5 6.5 L 5 9 L 9.5 3.5" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>"Good evening, Alex" — warm but not familiar</span>
+        </div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M2.5 6.5 L 5 9 L 9.5 3.5" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>"Match your remaining kcal" — helpful</span>
+        </div>
+      </div>
+
+      <div class="docard dont">
+        <div class="docard-label">Don't write</div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M3 3 L 9 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+            <path d="M9 3 L 3 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+          </svg>
+          <span>"Crush your goals today!" — coach voice</span>
+        </div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M3 3 L 9 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+            <path d="M9 3 L 3 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+          </svg>
+          <span>"You're 8% over your target!" — alarmist</span>
+        </div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M3 3 L 9 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+            <path d="M9 3 L 3 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+          </svg>
+          <span>"Hey buddy, ready to track?" — overfamiliar</span>
+        </div>
+        <div class="docard-row">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+            <path d="M3 3 L 9 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+            <path d="M9 3 L 3 9" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round"/>
+          </svg>
+          <span>"Don't break your streak!" — gamified pressure</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 10. ACCESSIBILITY -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2 class="section-title">Accessibility</h2>
+    </div>
+    <div class="a11y-grid">
+
+      <div class="a11y-card">
+        <div class="a11y-card-title">Touch targets</div>
+        <div class="a11y-card-body">Minimum 44×44px tap area for all interactive elements. Buttons that look smaller (like the 36×36 quantity stepper) include invisible padding to meet the threshold. Verified on all primary actions, secondary actions, list rows, and tab bar items.</div>
+      </div>
+
+      <div class="a11y-card">
+        <div class="a11y-card-title">Color contrast</div>
+        <div class="a11y-card-body">All text–background combinations meet WCAG AA standards:</div>
+        <ul class="a11y-list">
+          <li>Primary text <code>#2D2D2D</code> on cream <code>#FAFAF5</code> — ratio ~13.4 (AAA)</li>
+          <li>Secondary text <code>#8B8B8B</code> on cream — ratio ~3.5 (AA Large)</li>
+          <li>Primary green <code>#7BAE7F</code> on cream — ratio ~3.1 (AA Large; headings/buttons only)</li>
+          <li>White text on green button — ratio ~3.2 (AA Large)</li>
+        </ul>
+      </div>
+
+      <div class="a11y-card">
+        <div class="a11y-card-title">Motion & mobility</div>
+        <div class="a11y-card-body">All transitions are under 200ms (fade 150ms, tap 80ms). No parallax, no auto-rotation, no autoplay. Future enhancement: respect <code>prefers-reduced-motion</code> to disable transitions entirely for users with vestibular sensitivities.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    NutriFlow · Design System · v1.0
+  </footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriFlow — Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ============================================
+     TOKENS — copied verbatim from design-system.html
+  ============================================ */
+  :root {
+    /* Color tokens */
+    --primary: #7BAE7F;
+    --accent: #FF6B6B;
+    --carbs: #F0B86E;
+    --warm: #D9886B;
+    --background: #FAFAF5;
+    --text-primary: #2D2D2D;
+    --ink: #1A2E1F;
+    --text-secondary: #8B8B8B;
+
+    --primary-soft: #E8F1E9;
+    --accent-soft: #FFE5E5;
+    --carbs-soft: #FBEACA;
+    --warm-soft: #F5DCD0;
+    --surface: #FFFFFF;
+    --border: rgba(45, 45, 45, 0.08);
+
+    /* Spacing tokens */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --space-7: 64px;
+
+    /* Radius tokens */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-pill: 100px;
+
+    /* Elevation tokens */
+    --shadow-xs: 0 1px 2px rgba(45, 45, 45, 0.04);
+    --shadow-sm: 0 2px 8px rgba(45, 45, 45, 0.05);
+    --shadow-md: 0 8px 24px rgba(45, 45, 45, 0.06);
+    --shadow-lg: 0 20px 48px rgba(45, 45, 45, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ============================================
+     PAGE BACKGROUND + PHONE FRAME
+  ============================================ */
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #EFEEE7;
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: var(--space-6) var(--space-4);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .phone {
+    width: 410px;
+    height: 864px;
+    background: #1A1A1A;
+    border-radius: 54px;
+    padding: 10px;
+    box-shadow:
+      0 30px 60px rgba(45, 45, 45, 0.18),
+      0 8px 24px rgba(45, 45, 45, 0.08);
+    flex-shrink: 0;
+  }
+
+  .phone-inner {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    border-radius: 44px;
+    background: var(--background);
+    overflow: hidden;
+  }
+
+  /* Status bar */
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-4);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    z-index: 10;
+    pointer-events: none;
+  }
+  .status-icons {
+    display: inline-flex;
+    gap: var(--space-1);
+    align-items: center;
+  }
+  .status-icons svg { display: block; }
+
+  /* Screen container — holds all .screen-view layers */
+  .screen-container {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Each screen — absolute layer, fades via opacity.
+     Default bottom padding is --space-5 (sub-screens); .phone[data-current-screen="home"]
+     overrides to 130px to clear the visible tab bar. */
+  .screen-view {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 44px var(--space-4) var(--space-5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 150ms ease, visibility 150ms;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen-view.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  /* On Home, leave room for the tab bar */
+  .phone[data-current-screen="home"] .screen-view {
+    padding-bottom: 130px;
+  }
+
+  /* Tab bar — visible only on root (Home); hidden on task sub-screens.
+     Mobile-native pattern: tab bar is navigation chrome for root; sub-screens
+     hide it to focus the user on the task. Fades match the screen transition (150ms). */
+  .tab-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 84px;
+    padding-bottom: 20px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    z-index: 5;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 150ms ease, visibility 150ms;
+  }
+  .phone[data-current-screen="home"] .tab-bar {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .tabbar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+  }
+  .tabbar-icon { display: block; }
+  .tabbar-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+  }
+  .tabbar-item.active .tabbar-label { color: var(--primary); }
+
+  /* Home indicator */
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: rgba(45, 45, 45, 0.25);
+    border-radius: var(--radius-pill);
+    z-index: 6;
+    pointer-events: none;
+  }
+
+  /* ============================================
+     COMPONENTS — ported from design-system section 07
+  ============================================ */
+
+  /* Progress ring */
+  .ring-demo {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+  }
+  .ring-demo svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-bg { stroke: var(--primary-soft); }
+  .ring-fg { stroke: var(--primary); stroke-linecap: round; }
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .ring-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .ring-caption {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  /* Macro bars */
+  .macro-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+  }
+  .macro-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .macro-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .macro-row-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .macro-row-values {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+  .macro-row-values strong { color: var(--text-primary); font-weight: 800; }
+  .macro-track {
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--primary-soft);
+    overflow: hidden;
+  }
+  .macro-track.carbs { background: var(--carbs-soft); }
+  .macro-track.fat   { background: var(--accent-soft); }
+  .macro-fill {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--primary);
+  }
+  .macro-fill.carbs { background: var(--carbs); }
+  .macro-fill.fat   { background: var(--accent); }
+
+  /* Meal card list item — matches recipe-card structure (56px icon, --radius-lg, --shadow-sm)
+     while preserving meal-type color identity through the icon container background. */
+  .meal-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    cursor: pointer;
+  }
+  .meal-item-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  /* Per-meal background tint */
+  .meal-item-icon.breakfast { background: var(--carbs-soft); }
+  .meal-item-icon.lunch     { background: var(--primary-soft); }
+  .meal-item-icon.dinner    { background: var(--warm-soft); }
+
+  .meal-item-body { flex: 1; min-width: 0; }
+  .meal-item-meta {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .meal-item-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    /* Wrap to max 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .meal-item-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .meal-item-kcal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .meal-item-kcal-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .meal-item-kcal-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Section header */
+  .sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-head-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .sec-head-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  /* ============================================
+     HOME-SCREEN ONLY CLASSES
+  ============================================ */
+
+  .eyebrow {
+    margin-top: var(--space-4);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .greeting {
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-5);
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    line-height: 1.1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .greeting-line {
+    display: block;
+  }
+  .greeting-line.l1 {
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .greeting-line.l2 {
+    font-weight: 500;
+    color: var(--primary);
+  }
+
+  .calories-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+    margin-bottom: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .remaining {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .remaining-num {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .remaining-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .action-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+  .action-card {
+    width: 100%;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .action-card-icon {
+    width: 48px;
+    height: 48px;
+    /* Transparent layout slot — icon is the primary visual, no chip background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .action-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .action-card-label {
+    display: block;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25;
+  }
+  .action-card-sub {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    line-height: 1.35;
+  }
+  .action-card-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .macros-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .macros-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+  }
+
+  .meal-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* ============================================
+     ROUND 2 — SHARED COMPONENTS
+     (Ported verbatim from design-system section 07)
+  ============================================ */
+
+  /* Top bar — escapes the .screen-view 24px horizontal padding to go edge-to-edge.
+     Title is absolutely centered (iOS pattern) — independent of left/right action widths. */
+  .topbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+    padding: 0 var(--space-3);
+    margin-left: calc(var(--space-4) * -1);
+    margin-right: calc(var(--space-4) * -1);
+  }
+  .topbar-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topbar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    max-width: 60%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar-action { flex-shrink: 0; }
+  .topbar-action.text {
+    height: 40px;
+    padding: 0 var(--space-3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+  }
+  .topbar-action.icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topbar-action.placeholder {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Search bar */
+  .searchbar {
+    position: relative;
+    width: 100%;
+  }
+  .searchbar-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 var(--space-3) 0 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .searchbar-input::placeholder { color: var(--text-secondary); }
+  .searchbar-input:focus { border-color: var(--primary); }
+  .searchbar.has-value .searchbar-input { padding-right: 44px; }
+  .searchbar-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .searchbar-clear {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Quantity stepper */
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .qty-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    border: 1.5px solid var(--primary);
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qty-value {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 60px;
+    text-align: center;
+  }
+  .qty-value .qty-unit {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-left: var(--space-1);
+  }
+
+  /* Inline (smaller) stepper modifier */
+  .qty-stepper.inline { gap: var(--space-2); }
+  .qty-stepper.inline .qty-btn {
+    width: 28px;
+    height: 28px;
+  }
+  .qty-stepper.inline .qty-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .qty-stepper.inline .qty-value {
+    font-size: 15px;
+    min-width: 40px;
+  }
+
+  /* Connected (pill-grouped) stepper modifier — full-width pill with
+     minus-left / value-center / plus-right (iOS Settings pattern). */
+  .qty-stepper.connected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    gap: 12px;
+  }
+  .qty-stepper.connected .qty-value {
+    flex: 1;
+    font-size: 18px;
+    min-width: 0;
+    padding: 0 var(--space-3);
+    text-align: center;
+  }
+
+  /* Unified list row — base + two layout variants.
+     STACKED: name+qty stacked left, kcal column right  → Add Dish
+     INLINE:  name left, qty right (no kcal)            → Recipe Detail */
+  .list-container { width: 100%; }
+  .list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .list-row:last-child { border-bottom: none; }
+
+  /* — Stacked variant — */
+  .list-row__stacked .list-row-body { flex: 1; min-width: 0; }
+  .list-row__stacked .list-row-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .list-row__stacked .list-row-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .list-row__stacked .list-row-val {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .list-row__stacked .list-row-val-num {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .list-row__stacked .list-row-val-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* — Inline variant — */
+  .list-row__inline { align-items: baseline; }
+  .list-row__inline .list-row-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .list-row__inline .list-row-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  /* Buttons */
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+  }
+  .btn-block {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+  }
+  /* Chevron in a .btn-block is anchored to the right edge so the text stays
+     dead-center on the button (instead of being pushed left by the chevron). */
+  .btn-block > svg {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  /* Symmetric horizontal padding on chevron-bearing buttons so the centered
+     text truly aligns to the button's geometric center, and never overlaps
+     the chevron even for longer labels. */
+  .btn-block:has(> svg) {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  /* ============================================
+     ROUND 2 — FORM, ROW & RESULT PATTERNS
+  ============================================ */
+
+  .form-field { margin-top: var(--space-4); }
+  .form-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+  }
+  .field-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .field-input:focus { border-color: var(--primary); }
+
+  /* Browse saved dishes — full-width pill navigation button (Add Dish).
+     Pill shape groups it visually with the search bar and servings stepper
+     (actions/controls); rectangles are reserved for data-input fields. */
+  .browse-saved {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: 14px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .browse-saved-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .browse-saved-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .browse-saved-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Ingredient row wrapper (Add Dish) — composes the unified .list-row.list-row__stacked
+     for the data display (line 1) with a right-aligned stepper sub-row (line 2). The
+     wrapper provides the border-bottom; the nested .list-row drops its own. */
+  .ingredient-row {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ingredient-row:last-child { border-bottom: none; }
+  .ingredient-row > .list-row {
+    padding: 0;
+    border-bottom: none;
+  }
+  .ingredient-row-stepper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--space-1);
+  }
+
+  /* Dish summary header (Review) */
+  .dish-summary {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .dish-summary-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    /* line-height 1 ensures visible glyph top aligns with sibling display numbers
+       (e.g. the 36px Fraunces "221" in .total-card) */
+    line-height: 1;
+  }
+  .dish-summary-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  /* Total card (Review) — centered vertical stack:
+     hero number → divider → context line.
+     Editorial pyramid: 221 is the unmistakable hero metric. */
+  .total-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+    margin-top: var(--space-5);
+    text-align: center;
+  }
+  .total-card-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .total-card-num {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 500;
+    letter-spacing: -1.5px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .total-card-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+  .total-card-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-3) 0;
+  }
+  .total-card-detail {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* Dish hero (Result) */
+  .dish-hero {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .dish-hero-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+  }
+  .dish-hero-name {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    color: var(--ink);
+    line-height: 1.1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+
+  /* Calories result card (Result) */
+  .calories-result-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+    text-align: center;
+    margin-bottom: var(--space-3);
+  }
+  .calories-result-num {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 500;
+    letter-spacing: -2px;
+    color: var(--ink);
+    line-height: 1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .calories-result-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+  }
+  .calories-result-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-3) 0;
+  }
+  .calories-result-detail {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* Button stack (Result) */
+  .button-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* ============================================
+     ROUND 3 — RECIPE FINDER
+  ============================================ */
+
+  /* Context card — calorie reminder with flame icon */
+  .context-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .context-card-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .context-card-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .context-card-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .context-card-main {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 2px;
+  }
+
+  /* Filters section */
+  .filters-section {
+    margin-top: var(--space-4);
+  }
+  .filters-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+  }
+  .filter-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  /* Filter chip — pill with selected/unselected states (ported from design-system) */
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .filter-chip.selected {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .filter-chip-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  /* Recipe card list */
+  .recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .recipe-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-3);
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+  }
+  .recipe-card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .recipe-card-icon.bowl    { background: var(--primary-soft); }
+  .recipe-card-icon.apple   { background: var(--accent-soft); }
+  .recipe-card-icon.bread   { background: var(--warm-soft); }
+  .recipe-card-icon.egg     { background: var(--carbs-soft); }
+  /* Recipe category modifiers — all sage-tinted to match the sage-stroked icons */
+  .recipe-card-icon.fish    { background: var(--primary-soft); }
+  .recipe-card-icon.stew    { background: var(--primary-soft); }
+  .recipe-card-icon.stirfry { background: var(--primary-soft); }
+
+  .recipe-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .recipe-card-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .recipe-card-meta {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .recipe-card-kcal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .recipe-card-kcal-num {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .recipe-card-kcal-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ============================================
+     ROUND 3 — RECIPE DETAIL
+  ============================================ */
+
+  /* Recipe header */
+  .recipe-header {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .recipe-header-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .recipe-header-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    color: var(--ink);
+    line-height: 1.1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    margin-top: var(--space-2);
+  }
+  .recipe-header-meta {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  /* Nutrition card */
+  .nutrition-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .nutrition-card-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+  }
+  .nutrition-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  .nutrition-card-kcal {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .nutrition-card-kcal-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .nutrition-card-kcal-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .nutrition-card-serving {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+  .nutrition-card-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-3) 0;
+  }
+  .nutrition-card-macros {
+    display: flex;
+    justify-content: space-between;
+  }
+  .mini-macro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+  .mini-macro-num {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    line-height: 1;
+  }
+  .mini-macro-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Accordion row (collapsed placeholder) */
+  .accordion-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-5);
+    font-family: 'Nunito', sans-serif;
+    width: 100%;
+  }
+  .accordion-row-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .accordion-row-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(90deg);
+  }
+
+  /* ============================================
+     MOBILE INTERACTION STATES
+     Tap feedback (:active) is primary. Hover wrapped in @media (hover: hover).
+  ============================================ */
+  .action-card,
+  .meal-item,
+  .tabbar-item,
+  .sec-head-link,
+  .btn,
+  .qty-btn,
+  .topbar-btn,
+  .topbar-action.text,
+  .topbar-action.icon,
+  .searchbar-clear,
+  .filter-chip,
+  .recipe-card,
+  .accordion-row,
+  .browse-saved {
+    transition:
+      transform 80ms ease,
+      opacity 80ms ease,
+      background 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .tabbar-item:active,
+  .sec-head-link:active,
+  .btn:active,
+  .qty-btn:active,
+  .topbar-btn:active,
+  .topbar-action.text:active,
+  .topbar-action.icon:active,
+  .searchbar-clear:active,
+  .filter-chip:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+  .action-card:active,
+  .recipe-card:active,
+  .browse-saved:active {
+    transform: scale(0.98);
+    opacity: 0.85;
+  }
+  .accordion-row:active {
+    transform: scale(0.99);
+    opacity: 0.9;
+  }
+  .meal-item:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone" data-current-screen="home">
+  <div class="phone-inner">
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span class="status-icons">
+        <!-- Signal: 4 ascending bars -->
+        <svg width="17" height="15" viewBox="0 0 17 15" fill="#2D2D2D" aria-hidden="true">
+          <rect x="0" y="11" width="3" height="4" rx="0.5"/>
+          <rect x="4.5" y="8" width="3" height="7" rx="0.5"/>
+          <rect x="9" y="4" width="3" height="11" rx="0.5"/>
+          <rect x="13.5" y="0" width="3" height="15" rx="0.5"/>
+        </svg>
+        <!-- WiFi: arcs + dot -->
+        <svg width="17" height="15" viewBox="0 0 17 15" fill="none" aria-hidden="true">
+          <path d="M2 6 A 7 7 0 0 1 15 6" stroke="#2D2D2D" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M4.5 9 A 4.5 4.5 0 0 1 12.5 9" stroke="#2D2D2D" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8.5" cy="12.5" r="1" fill="#2D2D2D"/>
+        </svg>
+        <!-- Battery: capsule with 90% sage fill + tip -->
+        <svg width="25" height="13" viewBox="0 0 25 13" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="21.5" height="11.5" rx="2.5" stroke="#2D2D2D" stroke-width="1.5"/>
+          <rect x="2.5" y="2.5" width="17.1" height="8" rx="1" fill="#7BAE7F"/>
+          <rect x="23" y="4" width="1.5" height="5" rx="0.5" fill="#2D2D2D"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- Screens layer -->
+    <div class="screen-container">
+
+      <!-- HOME -->
+      <div class="screen-view active" data-screen="home">
+        <div class="eyebrow">FRIDAY · MAY 23</div>
+
+        <div class="greeting">
+          <span class="greeting-line l1">Good evening,</span>
+          <span class="greeting-line l2">Alex</span>
+        </div>
+
+        <!-- Calories card -->
+        <div class="calories-card">
+          <div class="ring-demo">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="54" fill="none" stroke-width="10"/>
+              <!-- 50% : circumference 2π×54 ≈ 339.29 ; offset = 339.29 × 0.5 ≈ 169.65 -->
+              <circle class="ring-fg" cx="60" cy="60" r="54" fill="none" stroke-width="10"
+                      stroke-dasharray="339.29" stroke-dashoffset="169.65"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-num">1,000</div>
+              <div class="ring-caption">of 2,000 kcal</div>
+            </div>
+          </div>
+          <div class="remaining">
+            <span class="remaining-num">1,000</span>
+            <span class="remaining-text">kcal remaining today</span>
+          </div>
+        </div>
+
+        <!-- Action cards -->
+        <div class="action-cards">
+          <button class="action-card" data-nav="add-dish">
+            <span class="action-card-icon">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M8 5 L 8 11" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M11 5 L 11 11" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M14 5 L 14 11" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M8 5 L 8 14 C 8 15, 9 15.5, 11 15.5 C 13 15.5, 14 15, 14 14 L 14 5" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <path d="M11 15.5 L 11 27" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <path d="M22 5 C 25 5, 25 11, 22 12 L 22 27" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <path d="M21 5 C 18 5, 18 11, 21 12 L 22 12" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
+              </svg>
+            </span>
+            <span class="action-card-body">
+              <span class="action-card-label">Calculate a dish</span>
+              <span class="action-card-sub">Count the calories. Add to today.</span>
+            </span>
+            <span class="action-card-chevron">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <path d="M12 7 L 21 16 L 12 25" stroke="#8B8B8B" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </span>
+          </button>
+          <button class="action-card" data-nav="recipe-finder">
+            <span class="action-card-icon">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+                <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="action-card-body">
+              <span class="action-card-label">Find a recipe</span>
+              <span class="action-card-sub">Match your remaining calories</span>
+            </span>
+            <span class="action-card-chevron">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <path d="M12 7 L 21 16 L 12 25" stroke="#8B8B8B" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <!-- Macros card -->
+        <div class="macros-card">
+          <div class="macros-card-label">Macronutrients</div>
+          <div class="macro-stack">
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Protein</span>
+                <span class="macro-row-values"><strong>60g</strong> / 120g</span>
+              </div>
+              <div class="macro-track">
+                <div class="macro-fill" style="width: 50%;"></div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Carbs</span>
+                <span class="macro-row-values"><strong>125g</strong> / 250g</span>
+              </div>
+              <div class="macro-track carbs">
+                <div class="macro-fill carbs" style="width: 50%;"></div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Fat</span>
+                <span class="macro-row-values"><strong>35g</strong> / 70g</span>
+              </div>
+              <div class="macro-track fat">
+                <div class="macro-fill fat" style="width: 50%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's meals -->
+        <div class="sec-head">
+          <div class="sec-head-title">Today's meals</div>
+          <a class="sec-head-link" href="#">
+            View all
+            <svg width="12" height="12" viewBox="0 0 32 32" fill="none">
+              <path d="M12 7 L 21 16 L 12 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="meal-list">
+          <div class="meal-item">
+            <div class="meal-item-icon breakfast">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M6 16 C 6 11, 9 7, 14 7 C 17 7, 18 9, 21 9 C 25 9, 27 12, 27 16 C 27 21, 23 24, 18 24 C 11 24, 6 21, 6 16 Z" fill="#FAFAF5" stroke="#F0B86E" stroke-width="1.75" stroke-linejoin="round"/>
+                <circle cx="17" cy="15" r="4.5" fill="#FBEACA" stroke="#F0B86E" stroke-width="1.5"/>
+                <circle cx="15.5" cy="13.5" r="1" fill="#FAFAF5" opacity="0.6"/>
+              </svg>
+            </div>
+            <div class="meal-item-body">
+              <div class="meal-item-meta">Breakfast · 8:15 AM</div>
+              <div class="meal-item-name">Greek Yogurt Parfait</div>
+              <div class="meal-item-sub">Honey · granola · blueberries</div>
+            </div>
+            <div class="meal-item-kcal">
+              <span class="meal-item-kcal-num">380</span>
+              <span class="meal-item-kcal-unit">kcal</span>
+            </div>
+          </div>
+
+          <div class="meal-item">
+            <div class="meal-item-icon lunch">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M4 15 C 4 14, 5 14, 6 14 L 26 14 C 27 14, 28 14, 28 15 C 28 22, 22 27, 16 27 C 10 27, 4 22, 4 15 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M11 11 C 11 9, 13 8, 13 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 11 C 16 9, 18 8, 18 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M21 11 C 21 9, 23 8, 23 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="meal-item-body">
+              <div class="meal-item-meta">Lunch · 1:05 PM</div>
+              <div class="meal-item-name">Mediterranean Quinoa Bowl</div>
+              <div class="meal-item-sub">Chickpeas · feta · cucumber · lemon</div>
+            </div>
+            <div class="meal-item-kcal">
+              <span class="meal-item-kcal-num">620</span>
+              <span class="meal-item-kcal-unit">kcal</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ADD DISH -->
+      <div class="screen-view" data-screen="add-dish">
+
+        <!-- Top bar -->
+        <div class="topbar">
+          <button class="topbar-btn" data-back aria-label="Back">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="topbar-title">Calculate a dish</div>
+        </div>
+
+        <!-- Browse saved dishes — entry point to a (hypothetical) saved-dishes list screen -->
+        <button class="browse-saved" aria-label="Browse saved dishes (not implemented in prototype)">
+          <span class="browse-saved-left">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="none" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+            <span class="browse-saved-label">Browse saved dishes</span>
+          </span>
+          <span class="browse-saved-chevron">
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+              <path d="M12 7 L 21 16 L 12 25" stroke="#8B8B8B" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </span>
+        </button>
+
+        <!-- Search bar -->
+        <div class="searchbar">
+          <span class="searchbar-icon">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input class="searchbar-input" type="text" placeholder="Search ingredients…">
+        </div>
+
+        <!-- Dish name field -->
+        <div class="form-field">
+          <div class="form-label">Dish name</div>
+          <input class="field-input" type="text" value="Homemade Pesto Pasta">
+        </div>
+
+        <!-- Servings field -->
+        <div class="form-field">
+          <div class="form-label">Servings</div>
+          <div class="qty-stepper connected">
+            <button class="qty-btn" aria-label="Decrease">
+              <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="qty-value">4</div>
+            <button class="qty-btn" aria-label="Increase">
+              <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ingredients section -->
+        <div class="sec-head" style="margin-top: var(--space-5);">
+          <div class="sec-head-title">Ingredients · 4 added</div>
+        </div>
+
+        <div class="ingredient-list">
+          <div class="ingredient-row">
+            <div class="list-row list-row__stacked">
+              <div class="list-row-body">
+                <div class="list-row-name">Spaghetti, raw</div>
+                <div class="list-row-sub">200 g</div>
+              </div>
+              <div class="list-row-val">
+                <span class="list-row-val-num">315</span>
+                <span class="list-row-val-unit">kcal</span>
+              </div>
+            </div>
+            <div class="ingredient-row-stepper">
+              <div class="qty-stepper inline">
+                <button class="qty-btn" aria-label="Decrease">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="qty-value">200</div>
+                <button class="qty-btn" aria-label="Increase">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ingredient-row">
+            <div class="list-row list-row__stacked">
+              <div class="list-row-body">
+                <div class="list-row-name">Olive oil</div>
+                <div class="list-row-sub">2 tbsp</div>
+              </div>
+              <div class="list-row-val">
+                <span class="list-row-val-num">240</span>
+                <span class="list-row-val-unit">kcal</span>
+              </div>
+            </div>
+            <div class="ingredient-row-stepper">
+              <div class="qty-stepper inline">
+                <button class="qty-btn" aria-label="Decrease">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="qty-value">2</div>
+                <button class="qty-btn" aria-label="Increase">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ingredient-row">
+            <div class="list-row list-row__stacked">
+              <div class="list-row-body">
+                <div class="list-row-name">Basil pesto</div>
+                <div class="list-row-sub">3 tbsp</div>
+              </div>
+              <div class="list-row-val">
+                <span class="list-row-val-num">210</span>
+                <span class="list-row-val-unit">kcal</span>
+              </div>
+            </div>
+            <div class="ingredient-row-stepper">
+              <div class="qty-stepper inline">
+                <button class="qty-btn" aria-label="Decrease">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="qty-value">3</div>
+                <button class="qty-btn" aria-label="Increase">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ingredient-row">
+            <div class="list-row list-row__stacked">
+              <div class="list-row-body">
+                <div class="list-row-name">Parmesan</div>
+                <div class="list-row-sub">30 g</div>
+              </div>
+              <div class="list-row-val">
+                <span class="list-row-val-num">120</span>
+                <span class="list-row-val-unit">kcal</span>
+              </div>
+            </div>
+            <div class="ingredient-row-stepper">
+              <div class="qty-stepper inline">
+                <button class="qty-btn" aria-label="Decrease">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="qty-value">30</div>
+                <button class="qty-btn" aria-label="Increase">
+                  <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                    <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total card — hero number, divider, context line -->
+        <div class="total-card">
+          <div class="total-card-hero">
+            <div class="total-card-num">221</div>
+            <div class="total-card-unit">kcal / serving</div>
+          </div>
+          <div class="total-card-divider"></div>
+          <div class="total-card-detail">Total · 885 kcal · 4 servings</div>
+        </div>
+
+        <!-- Primary CTA -->
+        <button class="btn btn-primary btn-block" data-nav="dish-result" style="margin-top: var(--space-4);">
+          Calculate dish
+          <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+            <path d="M12 7 L 21 16 L 12 25" stroke="#FFFFFF" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </button>
+
+      </div>
+
+      <!-- DISH RESULT -->
+      <div class="screen-view" data-screen="dish-result">
+
+        <!-- Top bar -->
+        <div class="topbar">
+          <button class="topbar-btn" data-back aria-label="Back">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="topbar-title">Result</div>
+        </div>
+
+        <!-- Dish hero -->
+        <div class="dish-hero">
+          <div class="dish-hero-eyebrow">Homemade</div>
+          <div class="dish-hero-name">Pesto Pasta</div>
+        </div>
+
+        <!-- Calories result card -->
+        <div class="calories-result-card">
+          <div class="calories-result-num">221</div>
+          <div class="calories-result-label">kcal per serving</div>
+          <div class="calories-result-divider"></div>
+          <div class="calories-result-detail">885 kcal · 4 servings</div>
+        </div>
+
+        <!-- Macros card -->
+        <div class="macros-card">
+          <div class="macros-card-label">Macronutrients · Per serving</div>
+          <div class="macro-stack">
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Protein</span>
+                <span class="macro-row-values"><strong>12g</strong> / 30g</span>
+              </div>
+              <div class="macro-track">
+                <div class="macro-fill" style="width: 40%;"></div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Carbs</span>
+                <span class="macro-row-values"><strong>28g</strong> / 60g</span>
+              </div>
+              <div class="macro-track carbs">
+                <div class="macro-fill carbs" style="width: 47%;"></div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-row-head">
+                <span class="macro-row-name">Fat</span>
+                <span class="macro-row-values"><strong>8g</strong> / 20g</span>
+              </div>
+              <div class="macro-track fat">
+                <div class="macro-fill fat" style="width: 40%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="button-stack">
+          <button class="btn btn-primary btn-block" data-nav="home">
+            Add to today
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+              <path d="M12 7 L 21 16 L 12 25" stroke="#FFFFFF" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </button>
+          <button class="btn btn-secondary btn-block">Save as my dish</button>
+        </div>
+
+      </div>
+
+      <!-- RECIPE FINDER -->
+      <div class="screen-view" data-screen="recipe-finder">
+
+        <!-- Top bar -->
+        <div class="topbar">
+          <button class="topbar-btn" data-back aria-label="Back">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="topbar-title">Find a recipe</div>
+        </div>
+
+        <!-- Search bar -->
+        <div class="searchbar" style="margin-top: var(--space-3);">
+          <span class="searchbar-icon">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input class="searchbar-input" type="text" placeholder="Search recipes…">
+        </div>
+
+        <!-- Context card -->
+        <div class="context-card">
+          <div class="context-card-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M16 28 C 9 28, 6 23, 7 18 C 8 14, 11 13, 12 10 C 13 7, 12 4, 14 3 C 15 6, 17 7, 19 10 C 22 14, 26 16, 26 21 C 26 25, 22 28, 16 28 Z" fill="#FFE5E5" stroke="#FF6B6B" stroke-width="1.75" stroke-linejoin="round"/>
+              <path d="M16 26 C 13 26, 11 24, 11 21 C 11 18, 14 17, 14 14 C 16 16, 19 18, 19 22 C 19 24, 18 26, 16 26 Z" fill="#FF6B6B" opacity="0.55"/>
+            </svg>
+          </div>
+          <div class="context-card-text">
+            <div class="context-card-eyebrow">1,000 kcal remaining</div>
+            <div class="context-card-main">Showing recipes under 600 kcal</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+          <div class="filters-label">Filters</div>
+          <div class="filter-chips-row">
+            <button class="filter-chip selected">
+              Vegetarian
+              <span class="filter-chip-close">
+                <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+                  <path d="M3 3 L 9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M9 3 L 3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </button>
+            <button class="filter-chip selected">
+              Quick
+              <span class="filter-chip-close">
+                <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+                  <path d="M3 3 L 9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M9 3 L 3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </button>
+            <button class="filter-chip">Under 600 kcal</button>
+            <button class="filter-chip">Vegan</button>
+            <button class="filter-chip">High protein</button>
+          </div>
+        </div>
+
+        <!-- Results section -->
+        <div class="sec-head" style="margin-top: var(--space-5);">
+          <div class="sec-head-title">Results · 5 recipes</div>
+        </div>
+
+        <div class="recipe-list">
+          <!-- 1. Lemon Garlic Salmon — bowl (sage) — ONLY one with nav target -->
+          <button class="recipe-card" data-nav="recipe-detail">
+            <div class="recipe-card-icon fish">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M4 16 C 4 11, 10 8, 17 9 C 22 9.5, 25 13, 25 16 C 25 19, 22 22.5, 17 23 C 10 24, 4 21, 4 16 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M25 13 L 30 9 L 28 16 L 30 23 L 25 19 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <circle cx="8" cy="14" r="0.9" fill="#7BAE7F"/>
+                <path d="M12 12 C 13 14, 13 18, 12 20" stroke="#7BAE7F" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="recipe-card-body">
+              <div class="recipe-card-name">Lemon Garlic Salmon</div>
+              <div class="recipe-card-meta">20 min · high-protein</div>
+            </div>
+            <div class="recipe-card-kcal">
+              <span class="recipe-card-kcal-num">480</span>
+              <span class="recipe-card-kcal-unit">kcal</span>
+            </div>
+          </button>
+
+          <!-- 2. Chickpea Curry — bowl (sage) -->
+          <button class="recipe-card">
+            <div class="recipe-card-icon stew">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M11 6 Q 12 4, 11 2" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M16 5 Q 17 3, 16 1" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M21 6 Q 22 4, 21 2" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M6 11 L 26 11" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                <circle cx="16" cy="9.5" r="1.2" fill="#7BAE7F"/>
+                <path d="M7 12 L 25 12 L 25 25 C 25 26.5, 24 27, 23 27 L 9 27 C 8 27, 7 26.5, 7 25 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M7 15 L 4 15 L 4 18 L 7 18" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round" fill="none"/>
+                <path d="M25 15 L 28 15 L 28 18 L 25 18" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="recipe-card-body">
+              <div class="recipe-card-name">Chickpea Curry</div>
+              <div class="recipe-card-meta">30 min · vegetarian, vegan</div>
+            </div>
+            <div class="recipe-card-kcal">
+              <span class="recipe-card-kcal-num">420</span>
+              <span class="recipe-card-kcal-unit">kcal</span>
+            </div>
+          </button>
+
+          <!-- 3. Mediterranean Quinoa Bowl — bowl (sage) -->
+          <button class="recipe-card">
+            <div class="recipe-card-icon bowl">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M4 15 C 4 14, 5 14, 6 14 L 26 14 C 27 14, 28 14, 28 15 C 28 22, 22 27, 16 27 C 10 27, 4 22, 4 15 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M11 11 C 11 9, 13 8, 13 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 11 C 16 9, 18 8, 18 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M21 11 C 21 9, 23 8, 23 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="recipe-card-body">
+              <div class="recipe-card-name">Mediterranean Quinoa Bowl</div>
+              <div class="recipe-card-meta">15 min · vegetarian</div>
+            </div>
+            <div class="recipe-card-kcal">
+              <span class="recipe-card-kcal-num">550</span>
+              <span class="recipe-card-kcal-unit">kcal</span>
+            </div>
+          </button>
+
+          <!-- 4. Grilled Chicken Salad — apple (coral) -->
+          <button class="recipe-card">
+            <div class="recipe-card-icon bowl">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M4 15 C 4 14, 5 14, 6 14 L 26 14 C 27 14, 28 14, 28 15 C 28 22, 22 27, 16 27 C 10 27, 4 22, 4 15 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M11 11 C 11 9, 13 8, 13 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 11 C 16 9, 18 8, 18 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M21 11 C 21 9, 23 8, 23 6" stroke="#7BAE7F" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="recipe-card-body">
+              <div class="recipe-card-name">Grilled Chicken Salad</div>
+              <div class="recipe-card-meta">12 min · high-protein</div>
+            </div>
+            <div class="recipe-card-kcal">
+              <span class="recipe-card-kcal-num">380</span>
+              <span class="recipe-card-kcal-unit">kcal</span>
+            </div>
+          </button>
+
+          <!-- 5. Veggie Stir-fry — bread (terracotta) -->
+          <button class="recipe-card">
+            <div class="recipe-card-icon stirfry">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <circle cx="13" cy="16" r="10" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75"/>
+                <path d="M23 16 L 29 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                <circle cx="10" cy="14" r="1.4" fill="#7BAE7F" opacity="0.5"/>
+                <circle cx="15" cy="13" r="1" fill="#7BAE7F" opacity="0.5"/>
+                <circle cx="9" cy="19" r="1.2" fill="#7BAE7F" opacity="0.5"/>
+                <circle cx="14" cy="20" r="0.9" fill="#7BAE7F" opacity="0.5"/>
+                <circle cx="17" cy="17" r="1.5" fill="#7BAE7F" opacity="0.5"/>
+              </svg>
+            </div>
+            <div class="recipe-card-body">
+              <div class="recipe-card-name">Veggie Stir-fry</div>
+              <div class="recipe-card-meta">18 min · vegetarian, quick</div>
+            </div>
+            <div class="recipe-card-kcal">
+              <span class="recipe-card-kcal-num">320</span>
+              <span class="recipe-card-kcal-unit">kcal</span>
+            </div>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RECIPE DETAIL -->
+      <div class="screen-view" data-screen="recipe-detail">
+
+        <!-- Top bar -->
+        <div class="topbar">
+          <button class="topbar-btn" data-back aria-label="Back">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="topbar-title">Recipe</div>
+        </div>
+
+        <!-- Recipe header -->
+        <div class="recipe-header">
+          <div class="recipe-header-eyebrow">Dinner</div>
+          <div class="recipe-header-title">Lemon Garlic Salmon</div>
+          <div class="recipe-header-meta">20 min · 480 kcal · high-protein</div>
+        </div>
+
+        <!-- Nutrition card -->
+        <div class="nutrition-card">
+          <div class="nutrition-card-label">Nutrition · Per serving</div>
+          <div class="nutrition-card-top">
+            <div class="nutrition-card-kcal">
+              <span class="nutrition-card-kcal-num">480</span>
+              <span class="nutrition-card-kcal-unit">kcal</span>
+            </div>
+            <div class="nutrition-card-serving">1 serving</div>
+          </div>
+          <div class="nutrition-card-divider"></div>
+          <div class="nutrition-card-macros">
+            <div class="mini-macro">
+              <div class="mini-macro-num">32g</div>
+              <div class="mini-macro-label">Protein</div>
+            </div>
+            <div class="mini-macro">
+              <div class="mini-macro-num">18g</div>
+              <div class="mini-macro-label">Carbs</div>
+            </div>
+            <div class="mini-macro">
+              <div class="mini-macro-num">28g</div>
+              <div class="mini-macro-label">Fat</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ingredients section -->
+        <div class="sec-head">
+          <div class="sec-head-title">Ingredients · 6 items</div>
+        </div>
+
+        <div class="list-container">
+          <div class="list-row list-row__inline">
+            <div class="list-row-name">Salmon fillet</div>
+            <div class="list-row-sub">200g</div>
+          </div>
+          <div class="list-row list-row__inline">
+            <div class="list-row-name">Lemon</div>
+            <div class="list-row-sub">1, juiced</div>
+          </div>
+          <div class="list-row list-row__inline">
+            <div class="list-row-name">Garlic cloves</div>
+            <div class="list-row-sub">3, minced</div>
+          </div>
+          <div class="list-row list-row__inline">
+            <div class="list-row-name">Olive oil</div>
+            <div class="list-row-sub">2 tbsp</div>
+          </div>
+          <div class="list-row list-row__inline">
+            <div class="list-row-name">Fresh dill</div>
+            <div class="list-row-sub">1 tbsp</div>
+          </div>
+          <div class="list-row list-row__inline">
+            <div class="list-row-name">Sea salt</div>
+            <div class="list-row-sub">to taste</div>
+          </div>
+        </div>
+
+        <!-- Instructions accordion (placeholder — collapsed only) -->
+        <button class="accordion-row" type="button">
+          <span class="accordion-row-title">Instructions · 4 steps</span>
+          <span class="accordion-row-chevron">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <path d="M12 7 L 21 16 L 12 25" stroke="#8B8B8B" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </span>
+        </button>
+
+        <!-- Action buttons -->
+        <div class="button-stack">
+          <button class="btn btn-primary btn-block" data-nav="home">
+            Add to today
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+              <path d="M12 7 L 21 16 L 12 25" stroke="#FFFFFF" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </button>
+          <button class="btn btn-secondary btn-block">Save for later</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Tab bar -->
+    <nav class="tab-bar" aria-label="Primary">
+      <button class="tabbar-item active" aria-current="page">
+        <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <path d="M5 14 L 16 5 L 27 14 L 27 26 C 27 26.5, 26.5 27, 26 27 L 6 27 C 5.5 27, 5 26.5, 5 26 Z" fill="#C8E2C9" fill-opacity="1" stroke="#7BAE7F" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13 27 L 13 19 C 13 18.5, 13.5 18, 14 18 L 18 18 C 18.5 18, 19 18.5, 19 19 L 19 27" stroke="#7BAE7F" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="tabbar-label">Home</div>
+      </button>
+      <button class="tabbar-item" data-nav="recipe-finder">
+        <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <circle cx="14" cy="14" r="8" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+          <path d="M20 20 L 26 26" stroke="#8B8B8B" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="tabbar-label">Search</div>
+      </button>
+      <button class="tabbar-item">
+        <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <div class="tabbar-label">Recipes</div>
+      </button>
+      <button class="tabbar-item">
+        <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <rect x="5" y="14" width="5" height="13" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+          <rect x="13.5" y="8" width="5" height="19" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+          <rect x="22" y="18" width="5" height="9" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
+        </svg>
+        <div class="tabbar-label">Stats</div>
+      </button>
+    </nav>
+
+    <div class="home-indicator"></div>
+
+  </div>
+</div>
+
+<script>
+  /* ============================================
+     ROUTER — fade transitions + back-stack
+     Silent in Round 1 (only "home" exists).
+     Round 2/3 will add the other 5 screens.
+  ============================================ */
+  (function () {
+    const backStack = [];
+    const FADE_MS = 150;
+
+    function current() {
+      return document.querySelector('.screen-view.active');
+    }
+
+    function navigate(toId, opts = {}) {
+      const cur = current();
+      const target = document.querySelector('.screen-view[data-screen="' + toId + '"]');
+      if (!target || !cur || cur === target) return;
+
+      // Clean root reset when forward-navigating to home
+      if (toId === 'home' && !opts.isBack) {
+        backStack.length = 0;
+      } else if (!opts.isBack) {
+        backStack.push(cur.dataset.screen);
+      }
+
+      // Fade out current
+      cur.classList.remove('active');
+
+      // Fade in target after the out-transition.
+      // Sync data-current-screen on .phone so the tab bar shows/hides via CSS
+      // (visible only when screen === "home").
+      setTimeout(() => {
+        target.classList.add('active');
+        document.querySelector('.phone').dataset.currentScreen = toId;
+      }, FADE_MS);
+    }
+
+    function goBack() {
+      if (backStack.length === 0) return;
+      const prev = backStack.pop();
+      navigate(prev, { isBack: true });
+    }
+
+    // Event delegation: any [data-nav] navigates, any [data-back] pops the stack
+    document.addEventListener('click', (e) => {
+      const navEl = e.target.closest('[data-nav]');
+      if (navEl) {
+        e.preventDefault();
+        navigate(navEl.dataset.nav);
+        return;
+      }
+      const backEl = e.target.closest('[data-back]');
+      if (backEl) {
+        e.preventDefault();
+        goBack();
+      }
+    });
+
+    // Expose for debugging
+    window.__router = { navigate, goBack, get stack() { return backStack.slice(); } };
+  })();
+</script>
+
+</body>
+</html>
