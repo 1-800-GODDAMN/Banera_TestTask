@@ -52,33 +52,33 @@
 
 **Goal**: Maria cooked a homemade pasta dish and wants to know the calories per serving.
 
-1. **Entry** → Taps "+" on home screen → "Calculate a Dish."
+1. **Entry** → Taps "Calculate a dish" action card on Home screen.
 2. **Add ingredients**:
-   - Search or scan each ingredient (e.g., "spaghetti, raw 200g", "olive oil 2 tbsp").
-   - Optional: paste a recipe URL → auto-extract ingredients.
-3. **Set servings** → Enter number of servings the dish makes (e.g., 4).
-4. **Review** → App shows total calories, kcal/serving, and macro breakdown.
-5. **Save** → Option to save as "My Dish" for one-tap logging later.
-6. **Log** → "Add to today" → choose meal (breakfast/lunch/dinner/snack).
+   - Search each ingredient (e.g., "spaghetti, raw 200g", "olive oil 2 tbsp").
+   - Adjust quantity inline with per-ingredient calorie feedback as you go.
+   - Optional: pick from "Browse saved dishes" for one-tap entry of a previously saved meal.
+3. **Set servings** → Enter number of servings the dish makes (e.g., 4). The total card updates live, showing kcal per serving.
+4. **Calculate** → Tap "Calculate dish" to see the full result: dish name, kcal per serving, total kcal, and macronutrient breakdown.
+5. **Log** → "Add to today" → meal is logged and Home updates with new remaining calories. Optional: "Save as my dish" for future one-tap logging.
 
 **Success criteria**: Complete in under 60 seconds for a 5-ingredient dish.
+
+**Note on consolidation**: The original spec included a separate "Review" step between Add ingredients and the result. I merged it into Add Dish — per-ingredient kcal and live total now appear on the same screen as the input. Fewer screens, same information, faster flow. The "Calculate dish" CTA then takes the user directly to the final result with macros and logging actions.
 
 ---
 
 ### Flow 2 — Find a Suitable Recipe
 
-**Goal**: Maria has 600 kcal left for dinner and wants a recipe idea.
+**Goal**: Maria has 1,000 kcal left for the day and wants a recipe idea for dinner.
 
-1. **Entry** → Home screen shows "Remaining today: 600 kcal" → tap "Find a recipe."
+1. **Entry** → Home screen shows "1,000 kcal remaining today" → tap "Find a recipe" action card.
 2. **Set constraints** (pre-filled from context):
-   - Calorie range: 400–600 kcal (auto-set from remaining budget).
-   - Optional filters: meal type, prep time, dietary restrictions, ingredients on hand.
-3. **Browse results** → Ranked list of recipes with thumbnail, kcal, prep time, macro tags.
-4. **Preview** → Tap a recipe → see ingredients, steps, full nutrition per serving.
+   - Calorie target: shown in a context card ("Showing recipes under 600 kcal") — automatically scaled to her remaining budget.
+   - Optional filters: dietary restrictions (Vegetarian, Vegan), prep time (Quick), nutrition (High protein, Under 600 kcal). Two filters are pre-selected based on Maria's profile.
+3. **Browse results** → Ranked list of 5 recipes with category icon (fish, stew, bowl, salad, stir-fry), kcal per serving, prep time, dietary tags.
+4. **Preview** → Tap a recipe → Recipe Detail shows nutrition per serving (kcal + protein/carbs/fat), ingredients list, and a collapsed "Instructions · 4 steps" section.
 5. **Choose action**:
-   - "Cook this" → adds to today's log + saves to meal plan.
+   - "Add to today" → adds to today's log and returns to Home with updated remaining calories.
    - "Save for later" → adds to favorites.
-   - "Adjust servings" → recalculates calories live.
-6. **Confirm** → Recipe logged, remaining calories updated on home screen.
 
-**Success criteria**: From "find a recipe" tap to logged meal in under 90 seconds.
+**Success criteria**: From "Find a recipe" tap to logged meal in under 90 seconds.
