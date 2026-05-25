@@ -48,37 +48,63 @@
 
 ## 3. User Flows
 
-### Flow 1 — Calculate Calories in a Dish
+### Flow 1 — Calculate calories in a dish
 
-**Goal**: Maria cooked a homemade pasta dish and wants to know the calories per serving.
+**Goal**: Maria wants to log a dish — either one she's saved before, a known public recipe, or something she's built from scratch.
 
-1. **Entry** → Taps "Calculate a dish" action card on Home screen.
-2. **Add ingredients**:
-   - Search each ingredient (e.g., "spaghetti, raw 200g", "olive oil 2 tbsp").
-   - Adjust quantity inline with per-ingredient calorie feedback as you go.
-   - Optional: pick from "Browse saved dishes" for one-tap entry of a previously saved meal.
-3. **Set servings** → Enter number of servings the dish makes (e.g., 4). The total card updates live, showing kcal per serving.
-4. **Calculate** → Tap "Calculate dish" to see the full result: dish name, kcal per serving, total kcal, and macronutrient breakdown.
-5. **Log** → "Add to today" → meal is logged and Home updates with new remaining calories. Optional: "Save as my dish" for future one-tap logging.
+The Home screen offers two entry points reflecting Maria's preference for fast paths over manual entry:
 
-**Success criteria**: Complete in under 60 seconds for a 5-ingredient dish.
+#### Path A — Log a saved or public dish (fast path)
 
-**Note on consolidation**: The original spec included a separate "Review" step between Add ingredients and the result. I merged it into Add Dish — per-ingredient kcal and live total now appear on the same screen as the input. Fewer screens, same information, faster flow. The "Calculate dish" CTA then takes the user directly to the final result with macros and logging actions.
+1. **Entry** → Home → tap "Log a dish".
+2. **Search or browse** → Saved dishes appear by default. Tap the search bar to find a public recipe (e.g. "spag" → Spaghetti Carbonara).
+3. **Select** → Tap the dish → opens the edit screen with all ingredients pre-filled.
+4. **Adjust** → Edit ingredient quantities with inline steppers if needed (e.g. used 250g spaghetti instead of 200g). Total calories recalculate live.
+5. **Log** → Tap "Add to today".
+
+**Success criteria**: From Home to logged meal in under 30 seconds for a saved dish.
+
+#### Path B — Build from scratch (manual path, fallback)
+
+1. **Entry** → Home → tap "Build a dish".
+2. **Empty state** → Edit screen opens with no ingredients. Empty state placeholder invites first add.
+3. **Add ingredients** → Tap "+ Add ingredient" → bottom sheet slides up with ingredient suggestions. Tap an ingredient (e.g. Tomato) → quantity stepper with live calorie preview → "Add to dish".
+4. **Repeat** → Continue adding ingredients one by one until the dish is built.
+5. **Name & set servings** → Optionally name the dish, adjust servings count.
+6. **Log** → Tap "Add to today".
+
+**Success criteria**: From Home to logged dish in under 60 seconds for a 5-ingredient dish.
+
+**Design rationale**: Maria's stated pain point is "hates manually entering every ingredient." Two paths respect that — the fast path (Log) handles 90% of common cases (repeated meals, known recipes), while the manual path (Build) remains available for genuine new dishes. The system never forces manual entry as the primary flow.
 
 ---
 
-### Flow 2 — Find a Suitable Recipe
+### Flow 2 — Find a suitable recipe
 
-**Goal**: Maria has 1,000 kcal left for the day and wants a recipe idea for dinner.
+**Goal**: Maria has remaining calories for the day and wants a recipe idea that fits her budget and preferences.
 
-1. **Entry** → Home screen shows "1,000 kcal remaining today" → tap "Find a recipe" action card.
-2. **Set constraints** (pre-filled from context):
-   - Calorie target: shown in a context card ("Showing recipes under 600 kcal") — automatically scaled to her remaining budget.
-   - Optional filters: dietary restrictions (Vegetarian, Vegan), prep time (Quick), nutrition (High protein, Under 600 kcal). Two filters are pre-selected based on Maria's profile.
-3. **Browse results** → Ranked list of 5 recipes with category icon (fish, stew, bowl, salad, stir-fry), kcal per serving, prep time, dietary tags.
-4. **Preview** → Tap a recipe → Recipe Detail shows nutrition per serving (kcal + protein/carbs/fat), ingredients list, and a collapsed "Instructions · 4 steps" section.
-5. **Choose action**:
-   - "Add to today" → adds to today's log and returns to Home with updated remaining calories.
-   - "Save for later" → adds to favorites.
+1. **Entry** → Tap "Search" in the tab bar.
+2. **Context** → Recipe Finder shows "1,000 kcal remaining → Showing recipes under 600 kcal" — pre-filtered to her actual remaining budget.
+3. **Refine filters** → Optional filter chips: dietary tags (Vegetarian, Vegan, High protein), prep time (Quick), calorie ceiling.
+4. **Browse results** → Ranked list of recipes with category icon, prep time, dietary tags, kcal.
+5. **Preview** → Tap a recipe → ingredients list + collapsible instructions + full nutrition breakdown (calories + macros per serving).
+6. **Choose action**:
+   - **Cook this** → adds to today's log → returns to Home with updated calorie count.
+   - **Save for later** → toggles saved state (bookmark fills sage). Recipe is now reachable via the Saved tab.
 
-**Success criteria**: From "Find a recipe" tap to logged meal in under 90 seconds.
+**Success criteria**: From Search tap to logged or saved recipe in under 90 seconds.
+
+**Design rationale**: Recipe discovery is a separate mental mode from calorie logging — prospective ("what should I cook") vs retrospective ("what did I eat"). Recipe Finder lives in the tab bar as a top-level discovery surface, not nested under Home, to honor that distinction. Stateful Save toggle lets Maria collect candidates without committing — she can plan tonight's dinner while browsing without logging it now.
+
+---
+
+## 4. Out of MVP Scope
+
+These elements would be addressed in iteration 2:
+
+- **Onboarding flow** — calorie target calculation via Mifflin-St Jeor formula based on user demographics. Current prototype uses static demo target (2,000 kcal).
+- **Real ingredient database** — USDA nutrition data integration for accurate kcal per 100g. Current prototype uses fake suggestion data.
+- **Saved recipes tab destination** — full screen for managing saved recipes (currently placeholder in tab bar).
+- **Stats tab destination** — long-term tracking visualizations (currently placeholder in tab bar).
+- **Meal type assignment on log** — choosing breakfast/lunch/dinner/snack at log time (currently auto-assigned).
+- **Edit history** — undo/redo on logged meals.
