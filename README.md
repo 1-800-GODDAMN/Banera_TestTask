@@ -1,5 +1,9 @@
 # NutriFlow
 
+## 🎥 Video walkthrough
+
+[Watch on Google Drive](https://drive.google.com/file/d/1Q_KGn-oZ-s_Q0lFyy5Pu0MDjlroyJVGy/view?usp=sharing)
+
 ## 👀 View the deliverables
 
 All deliverables render as live HTML pages via GitHub Pages. Click the links below — **do not open the `.html` files directly on GitHub, they will display as code, not as designs.**
