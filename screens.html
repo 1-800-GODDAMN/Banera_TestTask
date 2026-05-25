@@ -138,8 +138,10 @@
     opacity: 1;
     visibility: visible;
   }
-  /* On Home, leave room for the tab bar */
-  .phone[data-current-screen="home"] .screen-view {
+  /* On screens where the tab bar is visible, leave room for it. */
+  .phone[data-current-screen="home"] .screen-view,
+  .phone[data-current-screen="recipe-finder"] .screen-view,
+  .phone[data-current-screen="recipe-detail"] .screen-view {
     padding-bottom: 130px;
   }
 
@@ -164,7 +166,9 @@
     pointer-events: none;
     transition: opacity 150ms ease, visibility 150ms;
   }
-  .phone[data-current-screen="home"] .tab-bar {
+  .phone[data-current-screen="home"] .tab-bar,
+  .phone[data-current-screen="recipe-finder"] .tab-bar,
+  .phone[data-current-screen="recipe-detail"] .tab-bar {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -192,6 +196,17 @@
     color: var(--text-secondary);
   }
   .tabbar-item.active .tabbar-label { color: var(--primary); }
+  /* When .active, swap inactive grey strokes / translucent fills to sage.
+     CSS rules override SVG presentation attributes (specificity 0,0,0,0 on attrs). */
+  .tabbar-item.active .tabbar-icon [stroke="#8B8B8B"] { stroke: var(--primary); }
+  .tabbar-item.active .tabbar-icon [fill="#E8F1E9"][fill-opacity="0.25"] {
+    fill: #C8E2C9;
+    fill-opacity: 1;
+  }
+  /* Disabled tabs (Saved, Stats) — placeholders not part of MVP scope.
+     Visually faded so they don't read as broken interactive buttons. */
+  .tabbar-item.disabled { opacity: 0.4; cursor: default; }
+  .tabbar-item.disabled:active { transform: none; }
 
   /* Home indicator */
   .home-indicator {
@@ -344,11 +359,6 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-  .meal-item-sub {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-top: 2px;
   }
   .meal-item-kcal {
     display: flex;
@@ -618,6 +628,26 @@
     height: 40px;
   }
 
+  /* Page header — top-level tab destination title. Used INSTEAD of .topbar on
+     screens that are tab roots (no back button, editorial Fraunces title).
+     Reusable for any future top-level tab screen. Extends edge-to-edge via
+     negative margins, same as .topbar, but with restored content gutters. */
+  .page-header {
+    margin-left: calc(var(--space-4) * -1);
+    margin-right: calc(var(--space-4) * -1);
+    padding: var(--space-3) var(--space-4);
+  }
+  .page-header-title {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    margin: 0;
+  }
+
   /* Search bar */
   .searchbar {
     position: relative;
@@ -639,6 +669,10 @@
   .searchbar-input::placeholder { color: var(--text-secondary); }
   .searchbar-input:focus { border-color: var(--primary); }
   .searchbar.has-value .searchbar-input { padding-right: 44px; }
+  /* Clear (X) button is hidden until .searchbar has a value — JS toggles
+     the .has-value class on the magic-prefill activate/reset transitions. */
+  .searchbar .searchbar-clear { display: none; }
+  .searchbar.has-value .searchbar-clear { display: flex; }
   .searchbar-icon {
     position: absolute;
     left: var(--space-3);
@@ -822,6 +856,13 @@
     color: var(--primary);
     border: 1.5px solid var(--primary);
   }
+  /* Disabled state — used on dish-edit primary CTA when ingredient list is empty.
+     pointer-events: none also prevents the :active scale-down feedback from firing. */
+  .btn.is-disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
   .btn-block {
     position: relative;
     display: flex;
@@ -845,6 +886,18 @@
     padding-left: 48px;
     padding-right: 48px;
   }
+
+  /* Save toggle (Recipe Detail) — stateful secondary button. data-saved attribute
+     drives label swap, icon fill, and bg tint. CSS overrides the inline SVG
+     fill attribute (presentation attrs have specificity 0,0,0,0 — beaten by CSS). */
+  .save-toggle .save-label-saved { display: none; }
+  .save-toggle[data-saved="true"] .save-label-default { display: none; }
+  .save-toggle[data-saved="true"] .save-label-saved { display: inline; }
+  .save-toggle[data-saved="true"] .save-icon path {
+    fill: var(--primary);
+    opacity: 1;
+  }
+  .save-toggle[data-saved="true"] { background: var(--primary-soft); }
 
   /* ============================================
      ROUND 2 — FORM, ROW & RESULT PATTERNS
@@ -927,6 +980,222 @@
     justify-content: flex-end;
     margin-top: var(--space-1);
   }
+
+  /* =========================================
+     BOTTOM SHEET — modal overlay sliding up from bottom of phone frame.
+     New pattern not yet in design-system.html §07/08. Two-stage interior
+     (search → quantity) toggled via data-stage on .bottom-sheet.
+  ========================================= */
+  .bottom-sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 200ms ease, visibility 200ms;
+    z-index: 50;
+  }
+  .bottom-sheet-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .bottom-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 70%;
+    background: var(--surface);
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4) var(--space-5);
+    transform: translateY(100%);
+    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
+    z-index: 51;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 -8px 32px rgba(45, 45, 45, 0.12);
+  }
+  .bottom-sheet.open {
+    transform: translateY(0);
+  }
+  /* Decorative iOS-style handle (no SVG — pure CSS). */
+  .bottom-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto var(--space-3);
+  }
+  .bottom-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  .bottom-sheet-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    flex: 1;
+  }
+  .bottom-sheet-close,
+  .bottom-sheet-back {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  /* Stage 1 title left-aligned (search context); Stage 2 centered between back+close */
+  .bottom-sheet[data-stage="2"] .bottom-sheet-title { text-align: center; }
+  .bottom-sheet-stage { display: none; flex-direction: column; }
+  .bottom-sheet[data-stage="1"] .bottom-sheet-stage-1 { display: flex; }
+  .bottom-sheet[data-stage="2"] .bottom-sheet-stage-2 { display: flex; }
+
+  /* Suggestion list inside sheet — full-width clickable rows */
+  .suggestion-list { display: flex; flex-direction: column; }
+  .suggestion-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-3) 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .suggestion-row:last-child { border-bottom: none; }
+  .suggestion-row-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .suggestion-row-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* Stage 2 live preview — Fraunces total computed from kcal-per-100 × qty / 100 */
+  .sheet-preview {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+  .sheet-preview-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .sheet-preview-num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -1px;
+    line-height: 1;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .sheet-preview-unit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+  }
+
+  /* Empty state placeholder (Add Dish — ingredients = 0) */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-5);
+    background: var(--primary-soft);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-3);
+    text-align: center;
+  }
+  .empty-state-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: var(--space-2);
+  }
+  .empty-state-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* Left-icon variant of .btn-block — overrides the chevron-right anchor so the
+     SVG sits in normal flex flow on the left of the centered text label. */
+  .btn-block.btn-icon-left > svg {
+    position: static;
+    transform: none;
+  }
+  .btn-block.btn-icon-left {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  /* Sticky search bar on Add Dish — pins to the top of the screen's scroll
+     container so the user keeps query context when keyboard pushes content up.
+     Scoped via attribute selector so the shared .searchbar on Recipe Finder
+     stays non-sticky. The .screen-view's padding-top: 44px makes top: 0 here
+     sit exactly under the floating status bar. */
+  [data-screen="add-dish"] .searchbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--background);
+    padding: var(--space-3) 0;
+  }
+
+  /* Saved / search-results wrapper — transparent container; each row inside is
+     a full .recipe-card with its own background/shadow/radius. The wrapper just
+     groups the .sec-head header + the .recipe-list of cards. */
+  .search-results {
+    margin-top: var(--space-2);
+  }
+  /* Intentional §06 deviation for the sage-uniform saved-list context:
+     override coral / amber backgrounds on the .apple / .egg variants so every
+     icon container in the saved list reads as one consistent sage palette.
+     Paired with sage stroke overrides on those two icon SVGs in the HTML. */
+  #dish-search-results .recipe-card-icon.apple,
+  #dish-search-results .recipe-card-icon.egg {
+    background: var(--primary-soft);
+  }
+
 
   /* Dish summary header (Review) */
   .dish-summary {
@@ -1386,6 +1655,73 @@
   }
 
   /* ============================================
+     TOUCH TARGET COMPLIANCE (design-system §10)
+     Visible controls smaller than 44×44 get an invisible ::before pseudo
+     that extends the tap area to ≥44×44. No visual change, no layout shift —
+     the ::before is positioned absolute and centered on the control. Clicks
+     in the extended region bubble to the parent button via normal DOM flow.
+  ============================================ */
+
+  /* qty-btn — applies to BOTH .qty-stepper.connected (36×36 visible) and
+     .qty-stepper.inline (28×28 visible). Single ::before, 44×44 centered. */
+  .qty-btn { position: relative; }
+  .qty-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Topbar and bottom-sheet header icon buttons — 40×40 visible → 44×44 tap */
+  .topbar-btn,
+  .topbar-action.icon,
+  .bottom-sheet-close,
+  .bottom-sheet-back {
+    position: relative;
+  }
+  .topbar-btn::before,
+  .topbar-action.icon::before,
+  .bottom-sheet-close::before,
+  .bottom-sheet-back::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Search bar clear (X) — small SVG inside the input, ~16px visible.
+     Already position: absolute (own positioning context), so the ::before
+     anchors against it without needing position: relative. */
+  .searchbar-clear::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Filter chips — variable width (text-dependent), ~37px tall.
+     Extend height to 44px, keep chip's natural width. */
+  .filter-chip { position: relative; }
+  .filter-chip::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 44px;
+    transform: translateY(-50%);
+  }
+
+  /* ============================================
      MOBILE INTERACTION STATES
      Tap feedback (:active) is primary. Hover wrapped in @media (hover: hover).
   ============================================ */
@@ -1402,7 +1738,10 @@
   .filter-chip,
   .recipe-card,
   .accordion-row,
-  .browse-saved {
+  .browse-saved,
+  .suggestion-row,
+  .bottom-sheet-close,
+  .bottom-sheet-back {
     transition:
       transform 80ms ease,
       opacity 80ms ease,
@@ -1419,13 +1758,16 @@
   .topbar-action.text:active,
   .topbar-action.icon:active,
   .searchbar-clear:active,
-  .filter-chip:active {
+  .filter-chip:active,
+  .bottom-sheet-close:active,
+  .bottom-sheet-back:active {
     transform: scale(0.96);
     opacity: 0.85;
   }
   .action-card:active,
   .recipe-card:active,
-  .browse-saved:active {
+  .browse-saved:active,
+  .suggestion-row:active {
     transform: scale(0.98);
     opacity: 0.85;
   }
@@ -1517,8 +1859,8 @@
               </svg>
             </span>
             <span class="action-card-body">
-              <span class="action-card-label">Calculate a dish</span>
-              <span class="action-card-sub">Count the calories. Add to today.</span>
+              <span class="action-card-label">Log a dish</span>
+              <span class="action-card-sub">Track something you've already eaten</span>
             </span>
             <span class="action-card-chevron">
               <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
@@ -1526,16 +1868,18 @@
               </svg>
             </span>
           </button>
-          <button class="action-card" data-nav="recipe-finder">
+          <button class="action-card" data-nav="dish-edit" data-build-empty="true">
             <span class="action-card-icon">
+              <!-- ico-plus verbatim from §06 — circled plus, sage stroke 1.6 / 1.75 -->
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
-                <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+                <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
               </svg>
             </span>
             <span class="action-card-body">
-              <span class="action-card-label">Find a recipe</span>
-              <span class="action-card-sub">Match your remaining calories</span>
+              <span class="action-card-label">Build a dish</span>
+              <span class="action-card-sub">Add ingredients to calculate calories</span>
             </span>
             <span class="action-card-chevron">
               <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
@@ -1582,12 +1926,6 @@
         <!-- Today's meals -->
         <div class="sec-head">
           <div class="sec-head-title">Today's meals</div>
-          <a class="sec-head-link" href="#">
-            View all
-            <svg width="12" height="12" viewBox="0 0 32 32" fill="none">
-              <path d="M12 7 L 21 16 L 12 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            </svg>
-          </a>
         </div>
 
         <div class="meal-list">
@@ -1602,7 +1940,6 @@
             <div class="meal-item-body">
               <div class="meal-item-meta">Breakfast · 8:15 AM</div>
               <div class="meal-item-name">Greek Yogurt Parfait</div>
-              <div class="meal-item-sub">Honey · granola · blueberries</div>
             </div>
             <div class="meal-item-kcal">
               <span class="meal-item-kcal-num">380</span>
@@ -1622,7 +1959,6 @@
             <div class="meal-item-body">
               <div class="meal-item-meta">Lunch · 1:05 PM</div>
               <div class="meal-item-name">Mediterranean Quinoa Bowl</div>
-              <div class="meal-item-sub">Chickpeas · feta · cucumber · lemon</div>
             </div>
             <div class="meal-item-kcal">
               <span class="meal-item-kcal-num">620</span>
@@ -1644,25 +1980,10 @@
               <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
             </svg>
           </button>
-          <div class="topbar-title">Calculate a dish</div>
+          <div class="topbar-title">Log a dish</div>
         </div>
 
-        <!-- Browse saved dishes — entry point to a (hypothetical) saved-dishes list screen -->
-        <button class="browse-saved" aria-label="Browse saved dishes (not implemented in prototype)">
-          <span class="browse-saved-left">
-            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-              <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="none" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round"/>
-            </svg>
-            <span class="browse-saved-label">Browse saved dishes</span>
-          </span>
-          <span class="browse-saved-chevron">
-            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-              <path d="M12 7 L 21 16 L 12 25" stroke="#8B8B8B" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            </svg>
-          </span>
-        </button>
-
-        <!-- Search bar -->
+        <!-- Search bar — primary entry point -->
         <div class="searchbar">
           <span class="searchbar-icon">
             <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
@@ -1670,16 +1991,159 @@
               <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
           </span>
-          <input class="searchbar-input" type="text" placeholder="Search ingredients…">
+          <input class="searchbar-input" id="dish-search-input" type="text" placeholder="Search dishes…">
+          <button class="searchbar-clear" type="button" id="dish-search-clear" aria-label="Clear search" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M12 12 L 20 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <path d="M20 12 L 12 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
 
-        <!-- Dish name field -->
-        <div class="form-field">
+        <!-- Saved dishes card — always visible. Header reads "Saved" by default;
+             tapping the search input switches to a "Results" view filtered to
+             matches for "spag" (magic prefill demo). -->
+        <div class="search-results" id="dish-search-results">
+          <div class="sec-head">
+            <div class="sec-head-title">Saved · 5 dishes</div>
+          </div>
+          <div class="recipe-list">
+
+            <!-- Pesto Pasta — only real prefill target (navigates to dish-edit) -->
+            <button class="recipe-card" data-prefill="pesto-pasta" data-nav="dish-edit">
+              <div class="recipe-card-icon stirfry">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="13" cy="16" r="10" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75"/>
+                  <path d="M23 16 L 29 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  <circle cx="10" cy="14" r="1.4" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="15" cy="13" r="1" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="9" cy="19" r="1.2" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="14" cy="20" r="0.9" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="17" cy="17" r="1.5" fill="#7BAE7F" opacity="0.5"/>
+                </svg>
+              </div>
+              <div class="recipe-card-body">
+                <div class="recipe-card-name">Pesto Pasta</div>
+                <div class="recipe-card-meta">Saved</div>
+              </div>
+              <div class="recipe-card-kcal">
+                <span class="recipe-card-kcal-num">221</span>
+                <span class="recipe-card-kcal-unit">kcal</span>
+              </div>
+            </button>
+
+            <!-- Spaghetti Carbonara — same icon as Pesto (both pasta dishes) -->
+            <button class="recipe-card" data-prefill="static-demo" data-nav="dish-edit">
+              <div class="recipe-card-icon stirfry">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="13" cy="16" r="10" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75"/>
+                  <path d="M23 16 L 29 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                  <circle cx="10" cy="14" r="1.4" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="15" cy="13" r="1" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="9" cy="19" r="1.2" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="14" cy="20" r="0.9" fill="#7BAE7F" opacity="0.5"/>
+                  <circle cx="17" cy="17" r="1.5" fill="#7BAE7F" opacity="0.5"/>
+                </svg>
+              </div>
+              <div class="recipe-card-body">
+                <div class="recipe-card-name">Spaghetti Carbonara</div>
+                <div class="recipe-card-meta">Saved</div>
+              </div>
+              <div class="recipe-card-kcal">
+                <span class="recipe-card-kcal-num">580</span>
+                <span class="recipe-card-kcal-unit">kcal</span>
+              </div>
+            </button>
+
+            <!-- Caesar Salad — apple icon (intentional §06 color override:
+                 body recolored from coral to sage for sage-uniform saved list) -->
+            <button class="recipe-card" data-prefill="static-demo" data-nav="dish-edit">
+              <div class="recipe-card-icon apple">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M9 18 C 9 13, 12 11, 16 12 C 20 11, 23 13, 23 18 C 23 23, 20 28, 16 28 C 12 28, 9 23, 9 18 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                  <path d="M16 12 C 16 9, 17 6, 19 5" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                  <path d="M17 9 C 19 8, 21 8.5, 22 10 L 18.5 10 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.4" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="recipe-card-body">
+                <div class="recipe-card-name">Caesar Salad</div>
+                <div class="recipe-card-meta">Saved</div>
+              </div>
+              <div class="recipe-card-kcal">
+                <span class="recipe-card-kcal-num">320</span>
+                <span class="recipe-card-kcal-unit">kcal</span>
+              </div>
+            </button>
+
+            <!-- Greek Yogurt Parfait — egg icon (intentional §06 color override:
+                 body + yolk recolored from amber to sage for sage-uniform saved list) -->
+            <button class="recipe-card" data-prefill="static-demo" data-nav="dish-edit">
+              <div class="recipe-card-icon egg">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M6 16 C 6 11, 9 7, 14 7 C 17 7, 18 9, 21 9 C 25 9, 27 12, 27 16 C 27 21, 23 24, 18 24 C 11 24, 6 21, 6 16 Z" fill="#FAFAF5" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                  <circle cx="17" cy="15" r="4.5" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.5"/>
+                  <circle cx="15.5" cy="13.5" r="1" fill="#FAFAF5" opacity="0.6"/>
+                </svg>
+              </div>
+              <div class="recipe-card-body">
+                <div class="recipe-card-name">Greek Yogurt Parfait</div>
+                <div class="recipe-card-meta">Saved</div>
+              </div>
+              <div class="recipe-card-kcal">
+                <span class="recipe-card-kcal-num">380</span>
+                <span class="recipe-card-kcal-unit">kcal</span>
+              </div>
+            </button>
+
+            <!-- Lemon Garlic Salmon — fish icon / sage container -->
+            <button class="recipe-card" data-prefill="static-demo" data-nav="dish-edit">
+              <div class="recipe-card-icon fish">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M4 16 C 4 11, 10 8, 17 9 C 22 9.5, 25 13, 25 16 C 25 19, 22 22.5, 17 23 C 10 24, 4 21, 4 16 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                  <path d="M25 13 L 30 9 L 28 16 L 30 23 L 25 19 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.75" stroke-linejoin="round"/>
+                  <circle cx="8" cy="14" r="0.9" fill="#7BAE7F"/>
+                  <path d="M12 12 C 13 14, 13 18, 12 20" stroke="#7BAE7F" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                </svg>
+              </div>
+              <div class="recipe-card-body">
+                <div class="recipe-card-name">Lemon Garlic Salmon</div>
+                <div class="recipe-card-meta">Saved</div>
+              </div>
+              <div class="recipe-card-kcal">
+                <span class="recipe-card-kcal-num">480</span>
+                <span class="recipe-card-kcal-unit">kcal</span>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- DISH EDIT — reached from Log a dish (any saved card → here).
+           Pre-filled with Pesto Pasta data for all 5 saved cards (prototype demo).
+           Sub-screen, no tab bar. -->
+      <div class="screen-view" data-screen="dish-edit">
+
+        <!-- Top bar -->
+        <div class="topbar">
+          <button class="topbar-btn" data-back aria-label="Back">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="topbar-title">Pesto Pasta</div>
+        </div>
+
+        <!-- Dish name field — editable, pre-filled -->
+        <div class="form-field" style="margin-top: var(--space-4);">
           <div class="form-label">Dish name</div>
-          <input class="field-input" type="text" value="Homemade Pesto Pasta">
+          <input class="field-input" type="text" value="Pesto Pasta">
         </div>
 
-        <!-- Servings field -->
+        <!-- Servings field — defaults to 1 -->
         <div class="form-field">
           <div class="form-label">Servings</div>
           <div class="qty-stepper connected">
@@ -1688,7 +2152,7 @@
                 <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
               </svg>
             </button>
-            <div class="qty-value">4</div>
+            <div class="qty-value">1</div>
             <button class="qty-btn" aria-label="Increase">
               <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
                 <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
@@ -1698,12 +2162,13 @@
           </div>
         </div>
 
-        <!-- Ingredients section -->
+        <!-- Ingredients section header — dynamic count via id -->
         <div class="sec-head" style="margin-top: var(--space-5);">
-          <div class="sec-head-title">Ingredients · 4 added</div>
+          <div class="sec-head-title" id="dish-edit-ing-count">Ingredients · 4 added</div>
         </div>
 
-        <div class="ingredient-list">
+        <!-- Ingredients list (4 pre-filled) — id used by bottom-sheet JS to append new rows -->
+        <div class="ingredient-list" id="dish-edit-ing-list">
           <div class="ingredient-row">
             <div class="list-row list-row__stacked">
               <div class="list-row-body">
@@ -1821,22 +2286,41 @@
           </div>
         </div>
 
-        <!-- Total card — hero number, divider, context line -->
-        <div class="total-card">
+        <!-- Empty-state placeholder — shown when ingredient list is empty (Build flow
+             entry). Hidden by default; the state-prep JS toggles display via inline style. -->
+        <div class="empty-state" id="dish-edit-empty" style="display: none;">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+            <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="2.25" stroke-linecap="round"/>
+            <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="2.25" stroke-linecap="round"/>
+          </svg>
+          <div class="empty-state-title">No ingredients yet</div>
+          <div class="empty-state-sub">Add ingredients to start building your dish</div>
+        </div>
+
+        <!-- Add ingredient CTA — secondary, opens bottom sheet -->
+        <button class="btn btn-secondary btn-block btn-icon-left" data-action="open-ingredient-sheet" style="margin-top: var(--space-4);">
+          <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+            <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="2.25" stroke-linecap="round"/>
+            <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="2.25" stroke-linecap="round"/>
+          </svg>
+          Add ingredient
+        </button>
+
+        <!-- Total card — static; recompute is out of scope for prototype -->
+        <div class="total-card" style="margin-top: var(--space-5);">
           <div class="total-card-hero">
             <div class="total-card-num">221</div>
             <div class="total-card-unit">kcal / serving</div>
           </div>
           <div class="total-card-divider"></div>
-          <div class="total-card-detail">Total · 885 kcal · 4 servings</div>
+          <div class="total-card-detail">Total · 221 kcal · 1 serving</div>
         </div>
 
-        <!-- Primary CTA -->
-        <button class="btn btn-primary btn-block" data-nav="dish-result" style="margin-top: var(--space-4);">
-          Calculate dish
-          <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-            <path d="M12 7 L 21 16 L 12 25" stroke="#FFFFFF" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
+        <!-- Primary CTA — logs the dish to today, returns to Home (same pattern as
+             Dish Result + Recipe Detail "Add to today" buttons) -->
+        <button class="btn btn-primary btn-block" data-nav="home" style="margin-top: var(--space-4);">
+          Add to today
         </button>
 
       </div>
@@ -1907,11 +2391,13 @@
         <div class="button-stack">
           <button class="btn btn-primary btn-block" data-nav="home">
             Add to today
-            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-              <path d="M12 7 L 21 16 L 12 25" stroke="#FFFFFF" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </button>
+          <button class="btn btn-secondary btn-block">
+            Save as my dish
+            <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+              <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
             </svg>
           </button>
-          <button class="btn btn-secondary btn-block">Save as my dish</button>
         </div>
 
       </div>
@@ -1919,19 +2405,15 @@
       <!-- RECIPE FINDER -->
       <div class="screen-view" data-screen="recipe-finder">
 
-        <!-- Top bar -->
-        <div class="topbar">
-          <button class="topbar-btn" data-back aria-label="Back">
-            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-              <path d="M14 7 L 5 16 L 14 25" stroke="#2D2D2D" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <path d="M5 16 L 27 16" stroke="#2D2D2D" stroke-width="1.75" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="topbar-title">Find a recipe</div>
-        </div>
+        <!-- Page header — top-level tab destination. Editorial Fraunces title,
+             left-aligned, no back button. (See .page-header CSS for the reusable
+             pattern; intended for use on any future top-level tab screen.) -->
+        <header class="page-header">
+          <h1 class="page-header-title">Find a recipe</h1>
+        </header>
 
-        <!-- Search bar -->
-        <div class="searchbar" style="margin-top: var(--space-3);">
+        <!-- Search bar — no margin-top, page-header padding-bottom provides the gap -->
+        <div class="searchbar">
           <span class="searchbar-icon">
             <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
               <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
@@ -1941,10 +2423,11 @@
           <input class="searchbar-input" type="text" placeholder="Search recipes…">
         </div>
 
-        <!-- Context card -->
+        <!-- Context card — flame icon shrunk to 20×20 (Option A: lighter visual treatment).
+             Card reads as passive status indicator, not active CTA. -->
         <div class="context-card">
           <div class="context-card-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
               <path d="M16 28 C 9 28, 6 23, 7 18 C 8 14, 11 13, 12 10 C 13 7, 12 4, 14 3 C 15 6, 17 7, 19 10 C 22 14, 26 16, 26 21 C 26 25, 22 28, 16 28 Z" fill="#FFE5E5" stroke="#FF6B6B" stroke-width="1.75" stroke-linejoin="round"/>
               <path d="M16 26 C 13 26, 11 24, 11 21 C 11 18, 14 17, 14 14 C 16 16, 19 18, 19 22 C 19 24, 18 26, 16 26 Z" fill="#FF6B6B" opacity="0.55"/>
             </svg>
@@ -2189,44 +2672,53 @@
           </span>
         </button>
 
-        <!-- Action buttons -->
+        <!-- Action buttons — Recipe Detail uses "Cook this" (per research.md Flow 2
+             step 5: action is cook + log, not just log). Other primary CTAs across
+             the prototype stay as "Add to today" for their logging-only semantic. -->
         <div class="button-stack">
           <button class="btn btn-primary btn-block" data-nav="home">
-            Add to today
-            <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-              <path d="M12 7 L 21 16 L 12 25" stroke="#FFFFFF" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            Cook this
+          </button>
+          <button class="btn btn-secondary btn-block save-toggle" id="recipe-detail-save" data-saved="false">
+            <span class="save-label-default">Save for later</span>
+            <span class="save-label-saved">Saved</span>
+            <svg class="save-icon" width="18" height="18" viewBox="0 0 32 32" fill="none">
+              <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" stroke-linejoin="round" opacity="0.95"/>
             </svg>
           </button>
-          <button class="btn btn-secondary btn-block">Save for later</button>
         </div>
 
       </div>
 
     </div>
 
-    <!-- Tab bar -->
+    <!-- Tab bar — canonical structure from design-system.html §07.
+         Recipes → Saved rename (bookmark icon still fits). Search, Saved, Stats
+         use grey-inactive base colors; CSS .active rules override to sage when
+         JS toggles the .active class. Saved and Stats are MVP-out-of-scope
+         placeholders (no data-nav, marked .disabled). -->
     <nav class="tab-bar" aria-label="Primary">
-      <button class="tabbar-item active" aria-current="page">
+      <button class="tabbar-item" data-tab="home" data-nav="home">
         <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
-          <path d="M5 14 L 16 5 L 27 14 L 27 26 C 27 26.5, 26.5 27, 26 27 L 6 27 C 5.5 27, 5 26.5, 5 26 Z" fill="#C8E2C9" fill-opacity="1" stroke="#7BAE7F" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M13 27 L 13 19 C 13 18.5, 13.5 18, 14 18 L 18 18 C 18.5 18, 19 18.5, 19 19 L 19 27" stroke="#7BAE7F" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <path d="M5 14 L 16 5 L 27 14 L 27 26 C 27 26.5, 26.5 27, 26 27 L 6 27 C 5.5 27, 5 26.5, 5 26 Z" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13 27 L 13 19 C 13 18.5, 13.5 18, 14 18 L 18 18 C 18.5 18, 19 18.5, 19 19 L 19 27" stroke="#8B8B8B" stroke-width="1.8" stroke-linecap="round" fill="none"/>
         </svg>
         <div class="tabbar-label">Home</div>
       </button>
-      <button class="tabbar-item" data-nav="recipe-finder">
+      <button class="tabbar-item" data-tab="search" data-nav="recipe-finder">
         <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
           <circle cx="14" cy="14" r="8" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
           <path d="M20 20 L 26 26" stroke="#8B8B8B" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
         <div class="tabbar-label">Search</div>
       </button>
-      <button class="tabbar-item">
+      <button class="tabbar-item disabled" data-tab="saved" aria-disabled="true">
         <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
           <path d="M8 5 L 24 5 C 24.5 5, 25 5.5, 25 6 L 25 27 L 16 22 L 7 27 L 7 6 C 7 5.5, 7.5 5, 8 5 Z" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8" stroke-linejoin="round"/>
         </svg>
-        <div class="tabbar-label">Recipes</div>
+        <div class="tabbar-label">Saved</div>
       </button>
-      <button class="tabbar-item">
+      <button class="tabbar-item disabled" data-tab="stats" aria-disabled="true">
         <svg class="tabbar-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
           <rect x="5" y="14" width="5" height="13" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
           <rect x="13.5" y="8" width="5" height="19" rx="1.5" fill="#E8F1E9" fill-opacity="0.25" stroke="#8B8B8B" stroke-width="1.8"/>
@@ -2237,6 +2729,113 @@
     </nav>
 
     <div class="home-indicator"></div>
+
+    <!-- INGREDIENT BOTTOM SHEET — opens via [data-action="open-ingredient-sheet"]
+         on dish-edit's "+ Add ingredient" CTA. Two stages: search → quantity.
+         Stage toggle via data-stage attribute on .bottom-sheet. -->
+    <div class="bottom-sheet-backdrop" id="ingredient-sheet-backdrop"></div>
+    <div class="bottom-sheet" id="ingredient-sheet" data-stage="1" role="dialog" aria-modal="true" aria-label="Add ingredient">
+      <div class="bottom-sheet-handle"></div>
+
+      <!-- Stage 1: Search + Suggestions -->
+      <div class="bottom-sheet-stage bottom-sheet-stage-1">
+        <div class="bottom-sheet-header">
+          <div class="bottom-sheet-title">Add ingredient</div>
+          <button class="bottom-sheet-close" data-action="close-sheet" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M12 12 L 20 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <path d="M20 12 L 12 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="searchbar">
+          <span class="searchbar-icon">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <circle cx="14" cy="14" r="8" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M20 20 L 26 26" stroke="#7BAE7F" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input class="searchbar-input" type="text" placeholder="Search ingredients…">
+        </div>
+
+        <div class="sec-head" style="margin-top: var(--space-4); border-bottom: none; padding-bottom: 0;">
+          <div class="sec-head-title">Suggestions</div>
+        </div>
+
+        <div class="suggestion-list">
+          <button class="suggestion-row" data-name="Garlic" data-kpc="149">
+            <span class="suggestion-row-name">Garlic</span>
+            <span class="suggestion-row-sub">149 kcal per 100g</span>
+          </button>
+          <button class="suggestion-row" data-name="Tomato" data-kpc="18">
+            <span class="suggestion-row-name">Tomato</span>
+            <span class="suggestion-row-sub">18 kcal per 100g</span>
+          </button>
+          <button class="suggestion-row" data-name="Onion" data-kpc="40">
+            <span class="suggestion-row-name">Onion</span>
+            <span class="suggestion-row-sub">40 kcal per 100g</span>
+          </button>
+          <button class="suggestion-row" data-name="Mozzarella" data-kpc="280">
+            <span class="suggestion-row-name">Mozzarella</span>
+            <span class="suggestion-row-sub">280 kcal per 100g</span>
+          </button>
+          <button class="suggestion-row" data-name="Chicken breast" data-kpc="165">
+            <span class="suggestion-row-name">Chicken breast</span>
+            <span class="suggestion-row-sub">165 kcal per 100g</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage 2: Quantity + live preview + Add to dish CTA -->
+      <div class="bottom-sheet-stage bottom-sheet-stage-2">
+        <div class="bottom-sheet-header">
+          <button class="bottom-sheet-back" data-action="sheet-back-to-stage-1" aria-label="Back to suggestions">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <path d="M14 7 L 5 16 L 14 25" stroke="#7BAE7F" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M5 16 L 27 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="bottom-sheet-title" id="sheet-stage-2-name">Garlic</div>
+          <button class="bottom-sheet-close" data-action="close-sheet" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" fill="#E8F1E9" stroke="#7BAE7F" stroke-width="1.6" opacity="0.95"/>
+              <path d="M12 12 L 20 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              <path d="M20 12 L 12 20" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="form-field" style="margin-top: var(--space-3);">
+          <div class="form-label">Amount</div>
+          <div class="qty-stepper connected">
+            <button class="qty-btn" id="sheet-qty-dec" aria-label="Decrease">
+              <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="qty-value"><span id="sheet-qty-value">100</span><span class="qty-unit">g</span></div>
+            <button class="qty-btn" id="sheet-qty-inc" aria-label="Increase">
+              <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                <path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+                <path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="sheet-preview">
+          <span class="sheet-preview-label">Total</span>
+          <span class="sheet-preview-num" id="sheet-preview-num">149</span>
+          <span class="sheet-preview-unit">kcal</span>
+        </div>
+
+        <button class="btn btn-primary btn-block" data-action="add-to-dish" style="margin-top: var(--space-5);">
+          Add to dish
+        </button>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -2253,6 +2852,17 @@
 
     function current() {
       return document.querySelector('.screen-view.active');
+    }
+
+    function syncActiveTab(toId) {
+      document.querySelectorAll('.tabbar-item').forEach(t => t.classList.remove('active'));
+      if (toId === 'home') {
+        document.querySelector('.tabbar-item[data-tab="home"]')?.classList.add('active');
+      } else if (toId === 'recipe-finder' || toId === 'recipe-detail') {
+        document.querySelector('.tabbar-item[data-tab="search"]')?.classList.add('active');
+      }
+      // Sub-screens (add-dish, dish-edit, dish-result): no tab is marked active.
+      // The tab bar itself is hidden via CSS on those screens.
     }
 
     function navigate(toId, opts = {}) {
@@ -2272,10 +2882,11 @@
 
       // Fade in target after the out-transition.
       // Sync data-current-screen on .phone so the tab bar shows/hides via CSS
-      // (visible only when screen === "home").
+      // (visible on home, recipe-finder, recipe-detail).
       setTimeout(() => {
         target.classList.add('active');
         document.querySelector('.phone').dataset.currentScreen = toId;
+        syncActiveTab(toId);
       }, FADE_MS);
     }
 
@@ -2300,8 +2911,225 @@
       }
     });
 
+    // Initial active-tab sync on page load (Home is the default active screen)
+    syncActiveTab('home');
+
     // Expose for debugging
     window.__router = { navigate, goBack, get stack() { return backStack.slice(); } };
+  })();
+
+  /* Saved-list cards now use data-nav="dish-edit" — router handles navigation.
+     The dedicated pesto-prefill IIFE was removed (redundant). */
+
+  /* ============================================
+     ADD DISH — magic search prefill (Loom demo)
+     Tap input → instant prefill "spag" + filtered results + clear button.
+     Tap clear (X) → reset to default Saved state. No real search logic.
+     input.blur() after activate so the keyboard doesn't slide up on mobile —
+     the prefill is meant to read as an instant visual jump, not real typing.
+  ============================================ */
+  (function () {
+    const input = document.getElementById('dish-search-input');
+    const clear = document.getElementById('dish-search-clear');
+    const head  = document.querySelector('#dish-search-results .sec-head-title');
+    const rows  = document.querySelectorAll('#dish-search-results [data-prefill]');
+    if (!input || !clear || !head) return;
+
+    const searchbar = input.closest('.searchbar');
+    const ACTIVE_QUERY = 'spag';
+    const dishWord = (n) => n === 1 ? 'dish' : 'dishes';
+    const DEFAULT_HEAD = `Saved · ${rows.length} ${dishWord(rows.length)}`;
+    let isSearching = false;
+
+    function activate() {
+      if (isSearching) return;
+      isSearching = true;
+      input.value = ACTIVE_QUERY;
+      searchbar.classList.add('has-value');
+      let visible = 0;
+      rows.forEach((row) => {
+        const name = row.querySelector('.recipe-card-name').textContent.toLowerCase();
+        if (name.includes(ACTIVE_QUERY)) visible++;
+        else row.style.display = 'none';
+      });
+      head.textContent = `Results · ${visible} ${dishWord(visible)}`;
+      input.blur();
+    }
+
+    function reset() {
+      if (!isSearching) return;
+      isSearching = false;
+      input.value = '';
+      searchbar.classList.remove('has-value');
+      head.textContent = DEFAULT_HEAD;
+      rows.forEach((row) => { row.style.display = ''; });
+      input.blur();
+    }
+
+    input.addEventListener('click', activate);
+    input.addEventListener('focus', activate);
+
+    clear.addEventListener('click', (e) => {
+      e.stopPropagation();
+      reset();
+    });
+  })();
+
+  /* ============================================
+     DISH EDIT — entry-driven state prep
+     Two entry paths share one dish-edit screen:
+       1. "Build a dish" Home card → empty state (data-build-empty="true")
+       2. Any saved card on Log-a-dish → Pesto Pasta pre-fill (data-prefill="…")
+     This IIFE runs in the CAPTURE phase so state is set BEFORE the router's
+     bubble-phase click handler fires the fade transition. User never sees a
+     mismatched state during navigation.
+  ============================================ */
+  (function () {
+    const ingList     = document.getElementById('dish-edit-ing-list');
+    const emptyState  = document.getElementById('dish-edit-empty');
+    const ingCount    = document.getElementById('dish-edit-ing-count');
+    const dishNameInp = document.querySelector('[data-screen="dish-edit"] .field-input');
+    const servingsVal = document.querySelector('[data-screen="dish-edit"] .qty-stepper.connected .qty-value');
+    const totalCard   = document.querySelector('[data-screen="dish-edit"] .total-card');
+    const primaryCta  = document.querySelector('[data-screen="dish-edit"] .btn-primary[data-nav="home"]');
+    const topbarTitle = document.querySelector('[data-screen="dish-edit"] .topbar-title');
+    if (!ingList || !emptyState) return;
+
+    // Snapshot the Pesto Pasta state at page load so we can restore it later.
+    const PESTO_INGREDIENTS_HTML = ingList.innerHTML;
+
+    function applyPestoState() {
+      ingList.innerHTML       = PESTO_INGREDIENTS_HTML;
+      emptyState.style.display = 'none';
+      ingCount.textContent    = 'Ingredients · 4 added';
+      dishNameInp.value       = 'Pesto Pasta';
+      servingsVal.textContent = '1';
+      totalCard.style.display  = '';
+      primaryCta.classList.remove('is-disabled');
+      primaryCta.removeAttribute('aria-disabled');
+      topbarTitle.textContent  = 'Pesto Pasta';
+    }
+
+    function applyEmptyState() {
+      ingList.innerHTML       = '';
+      emptyState.style.display = '';
+      ingCount.textContent    = 'Ingredients · 0 added';
+      dishNameInp.value       = '';
+      servingsVal.textContent = '1';
+      totalCard.style.display  = 'none';
+      primaryCta.classList.add('is-disabled');
+      primaryCta.setAttribute('aria-disabled', 'true');
+      topbarTitle.textContent  = 'Build a dish';
+    }
+
+    // Capture-phase listener — runs before the router's bubble-phase delegation.
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-build-empty]')) {
+        applyEmptyState();
+      } else if (e.target.closest('[data-prefill]')) {
+        // All saved cards (pesto-pasta + static-demo) lead to the Pesto Pasta state per spec.
+        applyPestoState();
+      }
+    }, true);
+  })();
+
+  /* ============================================
+     DISH EDIT — ingredient bottom sheet
+     Stage 1: tap a suggestion → load that ingredient into Stage 2
+     Stage 2: +/− 10g increments, live-recompute total = kpc × qty / 100
+     "Add to dish" appends a new .ingredient-row to the list, closes the sheet,
+     and increments the section header count.
+  ============================================ */
+  (function () {
+    const sheet     = document.getElementById('ingredient-sheet');
+    const backdrop  = document.getElementById('ingredient-sheet-backdrop');
+    const stage2Nm  = document.getElementById('sheet-stage-2-name');
+    const qtyValue  = document.getElementById('sheet-qty-value');
+    const previewNm = document.getElementById('sheet-preview-num');
+    const qtyDec    = document.getElementById('sheet-qty-dec');
+    const qtyInc    = document.getElementById('sheet-qty-inc');
+    const ingList   = document.getElementById('dish-edit-ing-list');
+    const ingCount  = document.getElementById('dish-edit-ing-count');
+    if (!sheet || !backdrop) return;
+
+    const QTY_STEP = 10;
+    let cur = { name: '', kpc: 0, qty: 0 };
+
+    const open  = () => { sheet.dataset.stage = '1'; sheet.classList.add('open'); backdrop.classList.add('open'); };
+    const close = () => { sheet.classList.remove('open'); backdrop.classList.remove('open'); };
+    const pick  = (name, kpc) => {
+      cur = { name, kpc, qty: 100 };
+      stage2Nm.textContent  = name;
+      qtyValue.textContent  = '100';
+      previewNm.textContent = String(Math.round(kpc));
+      sheet.dataset.stage   = '2';
+    };
+    const bump = (d) => {
+      cur.qty = Math.max(10, cur.qty + d);
+      qtyValue.textContent  = String(cur.qty);
+      previewNm.textContent = String(Math.round(cur.kpc * cur.qty / 100));
+    };
+    const addRow = () => {
+      const total = Math.round(cur.kpc * cur.qty / 100);
+      const minus = '<svg width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/></svg>';
+      const plus  = '<svg width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M16 11 L 16 21" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/><path d="M11 16 L 21 16" stroke="#7BAE7F" stroke-width="1.75" stroke-linecap="round"/></svg>';
+      const row = document.createElement('div');
+      row.className = 'ingredient-row';
+      row.innerHTML =
+        '<div class="list-row list-row__stacked">' +
+          '<div class="list-row-body">' +
+            '<div class="list-row-name">' + cur.name + '</div>' +
+            '<div class="list-row-sub">' + cur.qty + ' g</div>' +
+          '</div>' +
+          '<div class="list-row-val">' +
+            '<span class="list-row-val-num">' + total + '</span>' +
+            '<span class="list-row-val-unit">kcal</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ingredient-row-stepper">' +
+          '<div class="qty-stepper inline">' +
+            '<button class="qty-btn" aria-label="Decrease">' + minus + '</button>' +
+            '<div class="qty-value">' + cur.qty + '</div>' +
+            '<button class="qty-btn" aria-label="Increase">' + plus + '</button>' +
+          '</div>' +
+        '</div>';
+      ingList.appendChild(row);
+      ingCount.textContent = 'Ingredients · ' + ingList.children.length + ' added';
+      // If this was the first ingredient (Build flow), exit the empty state:
+      // hide placeholder, reveal total card, enable primary CTA.
+      const emptyEl = document.getElementById('dish-edit-empty');
+      if (emptyEl) emptyEl.style.display = 'none';
+      const totalEl = document.querySelector('[data-screen="dish-edit"] .total-card');
+      if (totalEl) totalEl.style.display = '';
+      const ctaEl = document.querySelector('[data-screen="dish-edit"] .btn-primary[data-nav="home"]');
+      if (ctaEl) { ctaEl.classList.remove('is-disabled'); ctaEl.removeAttribute('aria-disabled'); }
+      close();
+    };
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-action="open-ingredient-sheet"]')) return open();
+      if (e.target.closest('[data-action="close-sheet"]')) return close();
+      if (e.target === backdrop) return close();
+      if (e.target.closest('[data-action="sheet-back-to-stage-1"]')) { sheet.dataset.stage = '1'; return; }
+      if (e.target.closest('[data-action="add-to-dish"]')) return addRow();
+      const s = e.target.closest('.suggestion-row');
+      if (s) pick(s.dataset.name, parseFloat(s.dataset.kpc));
+    });
+
+    qtyDec.addEventListener('click', () => bump(-QTY_STEP));
+    qtyInc.addEventListener('click', () => bump( QTY_STEP));
+  })();
+
+  /* ============================================
+     RECIPE DETAIL — Save toggle (stateful bookmark)
+     Flips data-saved between "false" and "true". CSS handles all visuals.
+  ============================================ */
+  (function () {
+    const btn = document.getElementById('recipe-detail-save');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      btn.dataset.saved = btn.dataset.saved === 'true' ? 'false' : 'true';
+    });
   })();
 </script>
 
